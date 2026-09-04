@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Aura AI — Sovereign Industrial Intelligence Workbench</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body class="dark-theme">
+
+  <!-- Application Navigation Header -->
+  <header class="app-header">
+    <div class="header-brand">
+      <div class="brand-logo">
+        <span class="logo-spark">✨</span>
+        <span class="brand-name">AURA AI</span>
+      </div>
+      <span class="brand-sub">Sovereign Industrial Intelligence</span>
+    </div>
+
+    <!-- Center Navigation Tabs -->
+    <nav class="nav-tabs">
+      <button class="nav-tab active" id="tab-btn-console" onclick="app.switchMainTab('console')">
+        <svg class="nav-icon" viewBox="0 0 24 24"><path fill="currentColor" d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zM6 9h12v2H6V9zm8 5H6v-2h8v2zm4-6H6V6h12v2z"/></svg>
+        Agent Console
+      </button>
+      <button class="nav-tab" id="tab-btn-inspector" onclick="app.switchMainTab('inspector')">
+        <svg class="nav-icon" viewBox="0 0 24 24"><path fill="currentColor" d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-2 10h-4v4h-2v-4H7v-2h4V7h2v4h4v2z"/></svg>
+        Visual & SCADA
+      </button>
+      <button class="nav-tab" id="tab-btn-vault" onclick="app.switchMainTab('vault')">
+        <svg class="nav-icon" viewBox="0 0 24 24"><path fill="currentColor" d="M4 6H2v14c0 1.1.9 2 2 2h14v-2H4V6zm16-4H8c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H8V4h12v12z"/></svg>
+        Data Vault
+      </button>
+    </nav>
+
+    <!-- Right Controls Bar -->
+    <div class="header-controls">
+      <!-- RBAC Switcher -->
+      <select id="rbacSelect" class="select-pill" onchange="app.switchRBACPersona(this.value)">
+        <option value="engineer" selected>👷 Engineer</option>
+        <option value="auditor">🛡️ Safety Auditor</option>
+        <option value="admin">⚙️ Sovereign Admin</option>
+      </select>
+
+      <!-- Active Model Quick Badge -->
+      <div class="model-badge" onclick="app.openModelModal()" title="Configure Open-Weight LLM Runtime">
+        <span class="dot-active"></span>
+        <span id="hdrModelName">Llama-3.3-70B</span>
+        <span class="badge-tag" id="hdrQuantTag">Q4_K_M</span>
+      </div>
+
+      <!-- Air-Gap Status -->
+      <div class="airgap-badge" onclick="app.openAuditModal()">
+        <span class="pulse-green"></span>
+        <span>100% AIR-GAPPED</span>
+      </div>
+
+      <!-- GPU VRAM Bar -->
+      <div class="vram-meter" onclick="app.openModelModal()" title="View GPU Memory Allocation">
+        <span class="vram-lbl">VRAM</span>
+        <div class="vram-track">
+          <div class="vram-fill" id="hdrVramFill" style="width: 48%;"></div>
+        </div>
+        <span class="vram-txt" id="hdrVramTxt">38.4/80GB</span>
+      </div>
+
+      <button class="btn btn-sm btn-outline" onclick="app.openModelModal()">Settings</button>
+    </div>
+  </header>
+
+  <!-- Main View Container -->
+  <main class="app-main">
+
+    <!-- VIEW 1: AGENT CONSOLE TAB -->
+    <section class="tab-view active" id="view-console">
+      <div class="console-wrapper">
+        
+        <!-- Scenario Preset Chips -->
+        <div class="preset-bar">
+          <span class="preset-title">⚡ Quick Scenarios:</span>
+          <div class="chip-group">
+            <button class="preset-chip chip-critical" onclick="app.runPresetQuery(0)">🔴 Pump 102 Seal Fail</button>
+            <button class="preset-chip chip-warning" onclick="app.runPresetQuery(1)">🟠 Flange V88 Heat Leak</button>
+            <button class="preset-chip chip-info" onclick="app.runPresetQuery(2)">🟡 Boiler B-3 Combustion</button>
+            <button class="preset-chip chip-success" onclick="app.runPresetQuery(3)">🟢 CDU Unit Audit</button>
+          </div>
+        </div>
+
+        <!-- Query Input Console -->
+        <div class="input-card">
+          <textarea id="queryInput" placeholder="Ask Aura AI about equipment manuals, sensor anomalies, or uploaded thermal scans (e.g. 'What is causing Pump 102 bearing vibration?')..."></textarea>
+          <div class="input-actions">
+            <span class="shortcut-tip">Press <strong>Ctrl + Enter</strong> to execute</span>
+            <button class="btn btn-primary btn-run" onclick="app.executeAgentQuery()">
+              <svg class="btn-icon" viewBox="0 0 24 24"><path fill="currentColor" d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
+              Execute Agent Workflow
+            </button>
+          </div>
+        </div>
+
+        <!-- Streamlined Pipeline Progress Track -->
+        <div class="pipeline-card">
+          <div class="pipeline-header">
+            <span class="pipeline-title">LangGraph Multi-Agent Workflow Execution</span>
+            <div class="pipeline-status">
+              <span class="status-tag idle" id="workflowStatusBadge">Idle</span>
+              <span class="timer-tag" id="executionTimer">0.00s</span>
+            </div>
+          </div>
+
+          <div class="pipeline-track">
+            <div class="pipe-node" id="node-guardrail" onclick="app.inspectAgentNode('guardrail')" title="Security Policy Node">
+              <span class="node-icon">🛡️</span>
+              <span class="node-label">Security Policy</span>
+              <span class="node-state">Ready</span>
+            </div>
+            <div class="pipe-line"></div>
+            <div class="pipe-node" id="node-vector" onclick="app.inspectAgentNode('vector')" title="Vector Search Node">
+              <span class="node-icon">🔍</span>
+              <span class="node-label">Vector RAG</span>
+              <span class="node-state">Ready</span>
+            </div>
+            <div class="pipe-line"></div>
+            <div class="pipe-node" id="node-vision" onclick="app.inspectAgentNode('vision')" title="Multimodal Vision Node">
+              <span class="node-icon">👁️</span>
+              <span class="node-label">Vision Scan</span>
+              <span class="node-state">Ready</span>
+            </div>
+            <div class="pipe-line"></div>
+            <div class="pipe-node" id="node-reasoner" onclick="app.inspectAgentNode('reasoner')" title="Diagnostic Reasoner Node">
+              <span class="node-icon">🧠</span>
+              <span class="node-label">Reasoning Engine</span>
+              <span class="node-state">Ready</span>
+            </div>
+            <div class="pipe-line"></div>
+            <div class="pipe-node" id="node-synthesizer" onclick="app.inspectAgentNode('synthesizer')" title="Report Synthesizer Node">
+              <span class="node-icon">📑</span>
+              <span class="node-label">SOP Builder</span>
+              <span class="node-state">Ready</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Diagnostic Response Container -->
+        <div class="output-wrapper" id="outputContainer">
+          <div class="empty-state">
+            <div class="empty-icon">✨</div>
+            <h3>Aura AI Sovereign Assistant Ready</h3>
+            <p>Select a quick scenario above or enter a custom prompt to execute the local multimodal agent graph.</p>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- VIEW 2: VISUAL & SCADA INSPECTOR TAB -->
+    <section class="tab-view" id="view-inspector">
+      <div class="inspector-grid">
+        
+        <!-- Left Panel: Thermal & Defect Canvas -->
+        <div class="inspector-card">
+          <div class="card-title-bar">
+            <div>
+              <h3 id="activeImageTitle">Pump 102 Assembly Scan</h3>
+              <span class="sub-tag">Multimodal Defect Inspector</span>
+            </div>
+            <div class="toggle-group">
+              <label class="switch-lbl">
+                <input type="checkbox" id="toggleThermal" checked onchange="app.renderVisualInspector()">
+                Thermal
+              </label>
+              <label class="switch-lbl">
+                <input type="checkbox" id="toggleDefects" checked onchange="app.renderVisualInspector()">
+                AI Boxes
+              </label>
+            </div>
+          </div>
+
+          <div class="canvas-box">
+            <canvas id="inspectionCanvas" width="560" height="340"></canvas>
+          </div>
+
+          <div class="metrics-grid">
+            <div class="metric-item">
+              <span class="m-lbl">Defect Classification</span>
+              <strong class="m-val danger" id="valDefectType">Bearing Overheat</strong>
+            </div>
+            <div class="metric-item">
+              <span class="m-lbl">Peak Temperature</span>
+              <strong class="m-val danger" id="valPeakTemp">94.8 °C</strong>
+            </div>
+            <div class="metric-item">
+              <span class="m-lbl">Structural Status</span>
+              <strong class="m-val warning" id="valIntegrity">Critical Friction Wear</strong>
+            </div>
+            <div class="metric-item">
+              <span class="m-lbl">Vision Confidence</span>
+              <strong class="m-val success" id="valConfidence">98.4%</strong>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right Panel: SCADA Telemetry Stream -->
+        <div class="inspector-card">
+          <div class="card-title-bar">
+            <div>
+              <h3>SCADA Telemetry Stream</h3>
+              <span class="sub-tag">ISO 10816 Vibration & Temp</span>
+            </div>
+            <div class="stream-control">
+              <span class="live-pulse" id="liveStreamDot"></span>
+              <button class="btn btn-sm btn-outline" id="btnLiveToggle" onclick="app.toggleLiveSCADA()">Stream Live</button>
+            </div>
+          </div>
+
+          <div class="canvas-box">
+            <canvas id="telemetryCanvas" width="560" height="280"></canvas>
+          </div>
+
+          <!-- Alert Banner -->
+          <div class="anomaly-banner hidden" id="anomalyAlertBox">
+            <span>⚠️ <strong>CRITICAL SPIKE:</strong> Vibration exceeded 8.00 mm/s on Pump 102!</span>
+            <button class="btn btn-sm btn-danger" onclick="app.runPresetQuery(0)">Investigate</button>
+          </div>
+
+          <div class="telemetry-bar">
+            <div class="timeframe-buttons">
+              <button class="btn-tf" id="tf-24h" onclick="app.setTelemetryTimeframe('24h')">24h</button>
+              <button class="btn-tf active" id="tf-7d" onclick="app.setTelemetryTimeframe('7d')">7d Spike</button>
+              <button class="btn-tf" id="tf-30d" onclick="app.setTelemetryTimeframe('30d')">30d Baseline</button>
+            </div>
+            <div class="telemetry-stat">
+              <span class="stat-lbl">Peak Vibration:</span>
+              <strong class="stat-num" id="statPeakVib">8.42 mm/s</strong>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- VIEW 3: KNOWLEDGE VAULT TAB -->
+    <section class="tab-view" id="view-vault">
+      <div class="vault-wrapper">
+        <div class="vault-header-bar">
+          <div>
+            <h2>Confidential Knowledge Vault</h2>
+            <p>Indexed locally using BGE Large embeddings stored in ChromaDB</p>
+          </div>
+          <div class="vault-search-box">
+            <input type="text" id="vaultSearchInput" placeholder="Search BGE vector index..." oninput="app.filterVaultFiles()">
+          </div>
+        </div>
+
+        <div class="vault-tabs-row">
+          <button class="vtab-btn active" data-tab="all" onclick="app.switchVaultFilter('all')">All Files</button>
+          <button class="vtab-btn" data-tab="docs" onclick="app.switchVaultFilter('docs')">Manuals & Logs</button>
+          <button class="vtab-btn" data-tab="images" onclick="app.switchVaultFilter('images')">Thermal Scans</button>
+          <button class="vtab-btn" data-tab="custom" onclick="app.switchVaultFilter('custom')">User Ingested</button>
+        </div>
+
+        <!-- Ingest Dropzone -->
+        <div class="drop-upload-box" id="dropZone" onclick="app.triggerFileUpload()">
+          <svg class="drop-icon" viewBox="0 0 24 24"><path fill="currentColor" d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96zM14 13v4h-4v-4H7l5-5 5 5h-3z"/></svg>
+          <strong>Click or Drag Files Here to Ingest into Local Vector Index</strong>
+          <span>Supports PDF, CSV, TXT, and Thermal Images (100% Air-Gapped Local Processing)</span>
+          <input type="file" id="fileInput" hidden onchange="app.handleFileSelect(event)">
+        </div>
+
+        <!-- File Cards Grid -->
+        <div class="file-grid" id="fileList">
+          <!-- Dynamic Cards Inserted Here -->
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- MODEL CONTROL MODAL -->
+  <div class="modal-overlay hidden" id="modelModal">
+    <div class="modal-card wide">
+      <div class="modal-header">
+        <h3>⚡ Open-Weight LLM Runtime & Quantization Settings</h3>
+        <button class="modal-close" onclick="app.closeModelModal()">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="model-grid-2">
+          <!-- Left Column: Open-Weight Models -->
+          <div class="opt-col">
+            <h4>Select On-Premise LLM</h4>
+            <div class="model-card active" data-model="llama-3.3-70b" onclick="app.selectModelProfile('llama-3.3-70b')">
+              <strong>🦙 Llama-3.3-70B-Instruct</strong>
+              <p>Meta's flagship open reasoner for industrial diagnostic engineering.</p>
+              <span class="card-meta">128k Context • ~38.4 GB VRAM (Q4)</span>
+            </div>
+
+            <div class="model-card" data-model="qwen2.5-vl-72b" onclick="app.selectModelProfile('qwen2.5-vl-72b')">
+              <strong>👁️ Qwen2.5-VL-72B Multimodal</strong>
+              <p>Multimodal vision leader for thermal imaging & P&ID optical scan.</p>
+              <span class="card-meta">32k Context • ~42.0 GB VRAM (AWQ)</span>
+            </div>
+
+            <div class="model-card" data-model="deepseek-r1-70b" onclick="app.selectModelProfile('deepseek-r1-70b')">
+              <strong>🧠 DeepSeek-R1-Distill-Llama-70B</strong>
+              <p>Explicit Chain-of-Thought reasoning for complex root cause analysis.</p>
+              <span class="card-meta">64k Context • ~39.2 GB VRAM (Q4)</span>
+            </div>
+
+            <div class="model-card" data-model="mistral-nemo-12b" onclick="app.selectModelProfile('mistral-nemo-12b')">
+              <strong>⚡ Mistral-NeMo-12B (Fast Edge)</strong>
+              <p>High-speed model for rapid SCADA telemetry auditing.</p>
+              <span class="card-meta">128k Context • ~7.2 GB VRAM (FP16)</span>
+            </div>
+          </div>
+
+          <!-- Right Column: Settings & VRAM Estimator -->
+          <div class="opt-col">
+            <h4>Inference Parameters</h4>
+            <div class="field-row">
+              <label>Quantization Mode:</label>
+              <select id="quantSelect" class="select-field" onchange="app.updateQuantization(this.value)">
+                <option value="Q4_K_M" selected>GGUF Q4_K_M (Optimal Memory/Accuracy Balance)</option>
+                <option value="AWQ">AWQ 4-bit (TensorRT-LLM GPU Accelerated)</option>
+                <option value="Q8_0">GGUF Q8_0 (Near Lossless Precision)</option>
+                <option value="FP16">FP16 Unquantized (Maximum Precision)</option>
+              </select>
+            </div>
+
+            <div class="field-row">
+              <label>Temperature: <span id="tempVal">0.2</span></label>
+              <input type="range" id="tempRange" min="0" max="1" step="0.05" value="0.2" oninput="document.getElementById('tempVal').innerText=this.value">
+            </div>
+
+            <div class="field-row">
+              <label>Local Endpoint Connector:</label>
+              <div class="endpoint-box">
+                <input type="text" id="endpointUrl" class="text-field" value="http://localhost:11434/api/generate">
+                <button class="btn btn-sm btn-outline" onclick="app.testLocalEndpoint()">Ping</button>
+              </div>
+              <span class="status-msg" id="endpointStatus">Status: Built-in Sovereign Engine Active</span>
+            </div>
+
+            <div class="vram-summary-box">
+              <div class="vrow"><span>Estimated VRAM Usage:</span> <strong id="estVramVal">38.4 GB / 80.0 GB</strong></div>
+              <div class="vrow"><span>Expected Generation Speed:</span> <strong id="estSpeedVal">42.5 Tokens/sec</strong></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-primary" onclick="app.applyModelSettings()">Save Settings</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- NODE INSPECTION MODAL -->
+  <div class="modal-overlay hidden" id="nodeModal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 id="nodeModalTitle">Node Inspection</h3>
+        <button class="modal-close" onclick="app.closeNodeModal()">&times;</button>
+      </div>
+      <div class="modal-body">
+        <pre class="json-code" id="nodeInspectContent"></pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECURITY AUDIT MODAL -->
+  <div class="modal-overlay hidden" id="auditModal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3>Air-Gap Security Guardrails</h3>
+        <button class="modal-close" onclick="app.closeAuditModal()">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="audit-banner">
+          <span>🛡️</span>
+          <div>
+            <strong>Zero Egress Physical Perimeter Active</strong>
+            <p>All inferences, vector queries, and image processing execute 100% locally on MRPL servers.</p>
+          </div>
+        </div>
+        <div class="log-box" id="auditLogWindow">
+          <div class="log-entry success">[AIRGAP 17:00:01] Firewall Egress Policy: REJECT ALL WAN (0.0.0.0/0).</div>
+          <div class="log-entry success">[AIRGAP 17:00:02] Local LLM Binding: 127.0.0.1:8000.</div>
+          <div class="log-entry info">[AIRGAP 17:00:05] ChromaDB Vector Chunks: 14,250 loaded.</div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-outline" onclick="app.exportAuditLogJSON()">Export Security Audit JSON</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
