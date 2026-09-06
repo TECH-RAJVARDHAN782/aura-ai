@@ -11,623 +11,713 @@
 </head>
 <body class="dark-theme">
 
-  <div class="app-layout">
-    
-    <!-- VERTICAL LEFT SIDEBAR NAVIGATION -->
-    <aside class="app-sidebar">
-      
-      <!-- Brand Header -->
-      <div class="sidebar-brand">
-        <div class="brand-logo">
-          <svg class="brand-icon" viewBox="0 0 24 24"><path fill="currentColor" d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
-          <span class="brand-name">AURA AI</span>
-        </div>
-        <span class="brand-sub">Sovereign Intelligence</span>
-      </div>
-
-      <!-- Main Navigation Menu (7 Primary Views) -->
-      <nav class="sidebar-menu">
-        <button class="nav-item active" id="nav-btn-console" onclick="app.switchMainView('console')">
-          <svg class="nav-icon" viewBox="0 0 24 24"><path fill="currentColor" d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zM6 9h12v2H6V9zm8 5H6v-2h8v2zm4-6H6V6h12v2z"/></svg>
-          <span>Agent Console</span>
-        </button>
-
-        <button class="nav-item" id="nav-btn-inspector" onclick="app.switchMainView('inspector')">
-          <svg class="nav-icon" viewBox="0 0 24 24"><path fill="currentColor" d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-2 10h-4v4h-2v-4H7v-2h4V7h2v4h4v2z"/></svg>
-          <span>Visual & SCADA</span>
-        </button>
-
-        <button class="nav-item" id="nav-btn-vault" onclick="app.switchMainView('vault')">
-          <svg class="nav-icon" viewBox="0 0 24 24"><path fill="currentColor" d="M4 6H2v14c0 1.1.9 2 2 2h14v-2H4V6zm16-4H8c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H8V4h12v12z"/></svg>
-          <span>Data Vault</span>
-        </button>
-
-        <button class="nav-item" id="nav-btn-security" onclick="app.switchMainView('security')">
-          <svg class="nav-icon" viewBox="0 0 24 24"><path fill="currentColor" d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 10.99h7c-.53 4.12-3.28 7.79-7 8.94V12H5V6.3l7-3.11v8.8z"/></svg>
-          <span>Security Policies</span>
-        </button>
-
-        <button class="nav-item" id="nav-btn-sop" onclick="app.switchMainView('sop')">
-          <svg class="nav-icon" viewBox="0 0 24 24"><path fill="currentColor" d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg>
-          <span>SOP Library & Records</span>
-        </button>
-
-        <button class="nav-item" id="nav-btn-telemetry" onclick="app.switchMainView('telemetry')">
-          <svg class="nav-icon" viewBox="0 0 24 24"><path fill="currentColor" d="M3.5 18.49l6-6.01 4 4L22 6.92l-1.41-1.41-7.09 7.09-4-4L2 17.08l1.5 1.41z"/></svg>
-          <span>Telemetry & VRAM</span>
-        </button>
-
-        <button class="nav-item" id="nav-btn-settings" onclick="app.switchMainView('settings')">
-          <svg class="nav-icon" viewBox="0 0 24 24"><path fill="currentColor" d="M19.43 12.98c.04-.32.07-.64.07-.98s-.03-.66-.07-.98l2.11-1.65c.19-.15.24-.42.12-.64l-2-3.46c-.12-.22-.39-.3-.61-.22l-2.49 1c-.52-.4-1.08-.73-1.69-.98l-.38-2.65C14.46 2.18 14.25 2 14 2h-4c-.25 0-.46.18-.49.42l-.38 2.65c-.61.25-1.17.59-1.69.98l-2.49-1c-.23-.09-.49 0-.61.22l-2 3.46c-.13.22-.07.49.12.64l2.11 1.65c-.04.32-.07.65-.07.98s.03.66.07.98l-2.11 1.65c-.19.15-.24.42-.12.64l2 3.46c.12.22.39.3.61.22l2.49-1c.52.4 1.08.73 1.69.98l.38 2.65c.03.24.24.42.49.42h4c.25 0 .46-.18.49-.42l.38-2.65c.61-.25 1.17-.59 1.69-.98l2.49 1c.23.09.49 0 .61-.22l2-3.46c.12-.22.07-.49-.12-.64l-2.11-1.65zM12 15.5c-1.93 0-3.5-1.57-3.5-3.5s1.57-3.5 3.5-3.5 3.5 1.57 3.5 3.5-1.57 3.5-3.5 3.5z"/></svg>
-          <span>Settings</span>
-        </button>
-      </nav>
-
-      <!-- Sidebar Footer (System Configs & Status) -->
-      <div class="sidebar-footer">
-        <!-- Role Selector -->
-        <div class="config-item">
-          <span class="cfg-label">Role Persona:</span>
-          <select id="rbacSelect" class="select-input" onchange="app.switchRBACPersona(this.value)">
-            <option value="engineer" selected>Engineer</option>
-            <option value="auditor">Safety Auditor</option>
-            <option value="admin">Sovereign Admin</option>
-          </select>
-        </div>
-
-        <!-- Model Status Indicator -->
-        <div class="model-status-card" onclick="app.switchMainView('settings')">
-          <div class="card-status-hdr">
-            <span class="status-dot-green"></span>
-            <span class="model-txt" id="sidebarModelName">Llama-3.3-70B</span>
-          </div>
-          <span class="quant-txt" id="sidebarQuant">GGUF Q4_K_M • 42.5 T/s</span>
-        </div>
-
-        <!-- Air-Gap Status Badge -->
-        <div class="airgap-card" onclick="app.switchMainView('security')">
-          <svg class="airgap-icon" viewBox="0 0 24 24"><path fill="currentColor" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
-          <div class="airgap-info">
-            <strong>100% AIR-GAPPED</strong>
-            <span>0 Bytes WAN Egress</span>
-          </div>
-        </div>
-
-        <!-- VRAM Usage Bar -->
-        <div class="vram-card">
-          <div class="vram-hdr">
-            <span>GPU VRAM</span>
-            <strong id="sidebarVramVal">38.4 / 80 GB</strong>
-          </div>
-          <div class="vram-bar-track">
-            <div class="vram-bar-fill" id="sidebarVramFill" style="width: 48%;"></div>
-          </div>
-        </div>
-      </div>
-    </aside>
-
-    <!-- MAIN CONTENT AREA -->
-    <div class="app-content">
-      
-      <!-- Top Utility Header Bar -->
-      <header class="top-util-bar">
-        <div class="search-wrap">
-          <svg class="search-icon" viewBox="0 0 24 24"><path fill="currentColor" d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
-          <input type="text" id="globalSearchInput" placeholder="Search industrial manuals, SCADA logs, SOP protocols..." oninput="app.handleGlobalSearch()">
-        </div>
-
-        <div class="util-right">
-          <!-- Active Pipeline Pill -->
-          <div class="util-pill">
-            <span class="pulse-dot"></span>
-            <span class="util-txt">Engine Active</span>
-          </div>
-
-          <!-- Notification Bell -->
-          <button class="util-icon-btn" onclick="app.showNotificationModal()" title="System Alerts">
-            <svg class="u-icon" viewBox="0 0 24 24"><path fill="currentColor" d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.89 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"/></svg>
-            <span class="notif-badge">2</span>
-          </button>
-
-          <!-- User Profile -->
-          <div class="user-profile">
-            <div class="user-avatar">PE</div>
-            <div class="user-details">
-              <span class="user-name">Plant Engineer</span>
-              <span class="user-role">MRPL Datacenter</span>
-            </div>
-          </div>
-        </div>
-      </header>
-
-      <!-- MAIN CONTAINER FOR 7 VIEWS -->
-      <main class="main-viewport">
-
-        <!-- VIEW 1: AGENT CONSOLE -->
-        <section class="view-panel active" id="view-console">
-          <div class="console-layout">
-            
-            <!-- Quick Scenarios Pill Bar -->
-            <div class="scenarios-bar">
-              <span class="scenarios-label">Industrial Failure Scenarios:</span>
-              <div class="scenario-pills">
-                <button class="scen-pill scen-danger" onclick="app.runPresetQuery(0)">
-                  <svg class="pill-icon" viewBox="0 0 24 24"><path fill="currentColor" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg>
-                  Pump 102 Seal Fail
-                </button>
-
-                <button class="scen-pill scen-warning" onclick="app.runPresetQuery(1)">
-                  <svg class="pill-icon" viewBox="0 0 24 24"><path fill="currentColor" d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"/></svg>
-                  Flange V88 Heat Leak
-                </button>
-
-                <button class="scen-pill scen-info" onclick="app.runPresetQuery(2)">
-                  <svg class="pill-icon" viewBox="0 0 24 24"><path fill="currentColor" d="M11 15h2v2h-2zm0-8h2v6h-2zm1-5C6.47 2 2 6.47 2 12s4.47 10 10 10 10-4.47 10-10S17.53 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"/></svg>
-                  Boiler B-3 Combustion
-                </button>
-
-                <button class="scen-pill scen-success" onclick="app.runPresetQuery(3)">
-                  <svg class="pill-icon" viewBox="0 0 24 24"><path fill="currentColor" d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z"/></svg>
-                  CDU Unit Audit
-                </button>
-              </div>
-            </div>
-
-            <!-- Query Input Card -->
-            <div class="query-card">
-              <textarea id="queryInput" placeholder="Ask Aura AI about equipment manuals, sensor anomalies, or uploaded thermal scans (e.g. 'What is causing Pump 102 bearing vibration?')..."></textarea>
-              <div class="query-card-footer">
-                <span class="key-hint">Press <strong>Ctrl + Enter</strong> to execute</span>
-                <button class="btn btn-primary" onclick="app.executeAgentQuery()">
-                  <svg class="btn-icon" viewBox="0 0 24 24"><path fill="currentColor" d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
-                  Execute Agent Workflow
-                </button>
-              </div>
-            </div>
-
-            <!-- Pipeline Execution State Card -->
-            <div class="pipeline-card">
-              <div class="pipeline-hdr">
-                <div class="hdr-title-wrap">
-                  <svg class="pipeline-icon" viewBox="0 0 24 24"><path fill="currentColor" d="M12 2L9.19 8.63 2 9.24l5.46 4.73L5.82 21 12 17.27 18.18 21l-1.64-7.03L22 9.24l-7.19-.61z"/></svg>
-                  <h3>LangGraph Multi-Agent Execution Pipeline</h3>
-                </div>
-                <div class="hdr-status-wrap">
-                  <span class="status-badge" id="workflowStatusBadge">Idle</span>
-                  <span class="timer-badge" id="executionTimer">0.00s</span>
-                </div>
-              </div>
-
-              <!-- Node Progress Bar -->
-              <div class="node-progress-track">
-                <div class="node-box" id="node-guardrail" onclick="app.inspectAgentNode('guardrail')">
-                  <div class="node-box-hdr">
-                    <svg class="n-icon" viewBox="0 0 24 24"><path fill="currentColor" d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4z"/></svg>
-                    <span>Security Policy</span>
-                  </div>
-                  <span class="node-state-txt">Ready</span>
-                </div>
-
-                <div class="track-connector"></div>
-
-                <div class="node-box" id="node-vector" onclick="app.inspectAgentNode('vector')">
-                  <div class="node-box-hdr">
-                    <svg class="n-icon" viewBox="0 0 24 24"><path fill="currentColor" d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5z"/></svg>
-                    <span>Vector RAG</span>
-                  </div>
-                  <span class="node-state-txt">Ready</span>
-                </div>
-
-                <div class="track-connector"></div>
-
-                <div class="node-box" id="node-vision" onclick="app.inspectAgentNode('vision')">
-                  <div class="node-box-hdr">
-                    <svg class="n-icon" viewBox="0 0 24 24"><path fill="currentColor" d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5z"/></svg>
-                    <span>Vision Scan</span>
-                  </div>
-                  <span class="node-state-txt">Ready</span>
-                </div>
-
-                <div class="track-connector"></div>
-
-                <div class="node-box" id="node-reasoner" onclick="app.inspectAgentNode('reasoner')">
-                  <div class="node-box-hdr">
-                    <svg class="n-icon" viewBox="0 0 24 24"><path fill="currentColor" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93z"/></svg>
-                    <span>Reasoning Engine</span>
-                  </div>
-                  <span class="node-state-txt">Ready</span>
-                </div>
-
-                <div class="track-connector"></div>
-
-                <div class="node-box" id="node-synthesizer" onclick="app.inspectAgentNode('synthesizer')">
-                  <div class="node-box-hdr">
-                    <svg class="n-icon" viewBox="0 0 24 24"><path fill="currentColor" d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-2 10h-4v4h-2v-4H7v-2h4V7h2v4h4v2z"/></svg>
-                    <span>SOP Builder</span>
-                  </div>
-                  <span class="node-state-txt">Ready</span>
-                </div>
-              </div>
-            </div>
-
-            <!-- Output Diagnostic Container -->
-            <div class="output-container" id="outputContainer">
-              <div class="placeholder-box">
-                <svg class="ph-icon" viewBox="0 0 24 24"><path fill="currentColor" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg>
-                <h3>Aura AI Sovereign Assistant Ready</h3>
-                <p>Select a quick scenario above or enter a custom prompt to execute the local multimodal agent pipeline.</p>
-              </div>
-            </div>
-
-          </div>
-        </section>
-
-        <!-- VIEW 2: VISUAL & SCADA INSPECTOR -->
-        <section class="view-panel" id="view-inspector">
-          <div class="inspector-grid">
-            
-            <!-- Left Card: Thermal Canvas -->
-            <div class="panel-card">
-              <div class="card-hdr">
-                <div>
-                  <h3 id="activeImageTitle">Pump 102 Assembly Scan</h3>
-                  <span class="hdr-sub">Multimodal Vision Defect Detector</span>
-                </div>
-                <div class="canvas-controls">
-                  <label class="toggle-lbl">
-                    <input type="checkbox" id="toggleThermal" checked onchange="app.renderVisualInspector()">
-                    <span>Thermal Heatmap</span>
-                  </label>
-                  <label class="toggle-lbl">
-                    <input type="checkbox" id="toggleDefects" checked onchange="app.renderVisualInspector()">
-                    <span>AI Bounding Boxes</span>
-                  </label>
-                </div>
-              </div>
-
-              <div class="canvas-frame">
-                <canvas id="inspectionCanvas" width="560" height="340"></canvas>
-              </div>
-
-              <div class="vision-metrics-grid">
-                <div class="v-metric">
-                  <span class="v-lbl">Defect Classification</span>
-                  <strong class="v-val text-red" id="valDefectType">Bearing Overheat</strong>
-                </div>
-                <div class="v-metric">
-                  <span class="v-lbl">Peak Temperature</span>
-                  <strong class="v-val text-red" id="valPeakTemp">94.8 °C</strong>
-                </div>
-                <div class="v-metric">
-                  <span class="v-lbl">Structural Health</span>
-                  <strong class="v-val text-amber" id="valIntegrity">Critical Friction Wear</strong>
-                </div>
-                <div class="v-metric">
-                  <span class="v-lbl">Vision Confidence</span>
-                  <strong class="v-val text-green" id="valConfidence">98.4%</strong>
-                </div>
-              </div>
-            </div>
-
-            <!-- Right Card: SCADA Sensor Telemetry -->
-            <div class="panel-card">
-              <div class="card-hdr">
-                <div>
-                  <h3>SCADA Live Telemetry Feed</h3>
-                  <span class="hdr-sub">ISO 10816 Vibration & Temperature</span>
-                </div>
-                <div class="stream-actions">
-                  <span class="live-pulse-dot" id="liveStreamDot"></span>
-                  <button class="btn btn-sm btn-outline" id="btnLiveToggle" onclick="app.toggleLiveSCADA()">Stream Live</button>
-                </div>
-              </div>
-
-              <div class="canvas-frame">
-                <canvas id="telemetryCanvas" width="560" height="280"></canvas>
-              </div>
-
-              <!-- Alarm Banner -->
-              <div class="alarm-banner hidden" id="anomalyAlertBox">
-                <div class="alarm-left">
-                  <svg class="alarm-icon" viewBox="0 0 24 24"><path fill="currentColor" d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"/></svg>
-                  <span><strong>CRITICAL SPIKE:</strong> Vibration exceeded 8.00 mm/s on Pump 102!</span>
-                </div>
-                <button class="btn btn-sm btn-danger" onclick="app.runPresetQuery(0)">Investigate</button>
-              </div>
-
-              <div class="telemetry-bar">
-                <div class="tf-btn-group">
-                  <button class="btn-tf" id="tf-24h" onclick="app.setTelemetryTimeframe('24h')">24h</button>
-                  <button class="btn-tf active" id="tf-7d" onclick="app.setTelemetryTimeframe('7d')">7d Spike</button>
-                  <button class="btn-tf" id="tf-30d" onclick="app.setTelemetryTimeframe('30d')">30d Baseline</button>
-                </div>
-                <div class="telemetry-stat">
-                  <span class="stat-lbl">Peak Vibration:</span>
-                  <strong class="stat-num text-red" id="statPeakVib">8.42 mm/s</strong>
-                </div>
-              </div>
-            </div>
-
-          </div>
-        </section>
-
-        <!-- VIEW 3: DATA VAULT -->
-        <section class="view-panel" id="view-vault">
-          <div class="vault-container">
-            <div class="vault-top-bar">
-              <div>
-                <h2>Confidential Knowledge Vault</h2>
-                <p>Air-gapped documents & vector chunks indexed using BGE Large in ChromaDB</p>
-              </div>
-              <div class="vault-search">
-                <input type="text" id="vaultSearchInput" placeholder="Search vector index..." oninput="app.filterVaultFiles()">
-              </div>
-            </div>
-
-            <div class="filter-tab-bar">
-              <button class="ftab-btn active" data-tab="all" onclick="app.switchVaultFilter('all')">All Files</button>
-              <button class="ftab-btn" data-tab="docs" onclick="app.switchVaultFilter('docs')">Manuals & Logs</button>
-              <button class="ftab-btn" data-tab="images" onclick="app.switchVaultFilter('images')">Thermal Scans</button>
-              <button class="ftab-btn" data-tab="custom" onclick="app.switchVaultFilter('custom')">User Ingested</button>
-            </div>
-
-            <div class="dropzone-box" id="dropZone" onclick="app.triggerFileUpload()">
-              <svg class="dz-icon" viewBox="0 0 24 24"><path fill="currentColor" d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96zM14 13v4h-4v-4H7l5-5 5 5h-3z"/></svg>
-              <strong>Click or Drag Files to Ingest into Local Vector Index</strong>
-              <span>Supports PDF, CSV, TXT, and Thermal Images (Zero External Network Egress)</span>
-              <input type="file" id="fileInput" hidden onchange="app.handleFileSelect(event)">
-            </div>
-
-            <div class="vault-grid" id="fileList">
-              <!-- Files inserted dynamically -->
-            </div>
-          </div>
-        </section>
-
-        <!-- VIEW 4: SECURITY POLICIES -->
-        <section class="view-panel" id="view-security">
-          <div class="sec-container">
-            <div class="sec-header">
-              <h2>Air-Gap Security & Zero-Egress Perimeter</h2>
-              <p>Physical & Network Isolation Rules for Confidential MRPL Industrial Data</p>
-            </div>
-
-            <div class="sec-grid">
-              <div class="sec-card">
-                <div class="sec-card-hdr">
-                  <svg class="sec-icon text-green" viewBox="0 0 24 24"><path fill="currentColor" d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4z"/></svg>
-                  <h3>Air-Gap Network Status</h3>
-                </div>
-                <div class="rule-list">
-                  <div class="rule-row"><span>WAN Egress Policy:</span> <strong class="text-green">REJECT ALL (0.0.0.0/0)</strong></div>
-                  <div class="rule-row"><span>Local Interface Binding:</span> <strong>127.0.0.1:8000</strong></div>
-                  <div class="rule-row"><span>Hardware Crypto Chip:</span> <strong class="text-green">TPM 2.0 VERIFIED</strong></div>
-                </div>
-              </div>
-
-              <div class="sec-card">
-                <div class="sec-card-hdr">
-                  <svg class="sec-icon text-cyan" viewBox="0 0 24 24"><path fill="currentColor" d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/></svg>
-                  <h3>PII & Sensor Masking Rules</h3>
-                </div>
-                <div class="rule-list">
-                  <div class="rule-row"><span>Employee ID Masking:</span> <strong class="text-cyan">ENABLED (HASH-SHA256)</strong></div>
-                  <div class="rule-row"><span>Refinery Location Scrubbing:</span> <strong class="text-cyan">ACTIVE</strong></div>
-                  <div class="rule-row"><span>Audit Log Persistence:</span> <strong>IMMUTABLE LOCAL DB</strong></div>
-                </div>
-              </div>
-            </div>
-
-            <div class="log-panel">
-              <div class="log-hdr">
-                <h3>Live Air-Gap Security Audit Log</h3>
-                <button class="btn btn-sm btn-outline" onclick="app.exportAuditLogJSON()">Export JSON Log</button>
-              </div>
-              <div class="log-stream" id="auditLogWindow">
-                <div class="log-line success">[AIRGAP 17:00:01] Firewall Egress Policy: REJECT ALL WAN (0.0.0.0/0).</div>
-                <div class="log-line success">[AIRGAP 17:00:02] Local LLM Binding: 127.0.0.1:8000.</div>
-                <div class="log-line info">[AIRGAP 17:00:05] ChromaDB Vector Chunks: 14,250 loaded.</div>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <!-- VIEW 5: SOP LIBRARY & RECORDS -->
-        <section class="view-panel" id="view-sop">
-          <div class="sop-container">
-            <div class="sop-top-bar">
-              <div>
-                <h2>Standard Operating Procedures & Records</h2>
-                <p>Confidential Emergency Protocols & Equipment Maintenance Guidelines</p>
-              </div>
-              <div class="sop-search">
-                <input type="text" placeholder="Filter SOP manuals..." oninput="app.filterSOPList(this.value)">
-              </div>
-            </div>
-
-            <div class="sop-grid" id="sopGrid">
-              <div class="sop-card">
-                <div class="sop-card-hdr">
-                  <svg class="sop-icon" viewBox="0 0 24 24"><path fill="currentColor" d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg>
-                  <div>
-                    <h4>SOP-MRPL-P102-SEAL</h4>
-                    <span class="sop-cat">Centrifugal Pumps</span>
-                  </div>
-                </div>
-                <p>Mechanical Seal Chamber Emergency Flushing Protocol (API Plan 11/52). Step-by-step seal failure isolation procedures.</p>
-                <div class="sop-meta">Revision 4.2 • Updated Aug 2026</div>
-              </div>
-
-              <div class="sop-card">
-                <div class="sop-card-hdr">
-                  <svg class="sop-icon" viewBox="0 0 24 24"><path fill="currentColor" d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg>
-                  <div>
-                    <h4>SOP-MRPL-B3-PRESSURE</h4>
-                    <span class="sop-cat">Boilers & Steam Valves</span>
-                  </div>
-                </div>
-                <p>Boiler B-3 Steam Discharge Drop & Damper Mismatch Corrective Protocol. Emergency pneumatic valve purging.</p>
-                <div class="sop-meta">Revision 2.1 • Updated Jul 2026</div>
-              </div>
-
-              <div class="sop-card">
-                <div class="sop-card-hdr">
-                  <svg class="sop-icon" viewBox="0 0 24 24"><path fill="currentColor" d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg>
-                  <div>
-                    <h4>SOP-MRPL-FLANGE-TORQUE</h4>
-                    <span class="sop-cat">High Pressure Piping</span>
-                  </div>
-                </div>
-                <p>Class 600 Pressure Flange Thermal Leakage & Stud Torque Re-Alignment sequence using hydraulic torque wrench.</p>
-                <div class="sop-meta">Revision 5.0 • Updated Sep 2026</div>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <!-- VIEW 6: TELEMETRY & VRAM MONITOR -->
-        <section class="view-panel" id="view-telemetry">
-          <div class="telem-container">
-            <div class="telem-header">
-              <h2>On-Premise GPU & Telemetry Monitor</h2>
-              <p>Hardware Cluster VRAM Allocation & Model Inference Latency</p>
-            </div>
-
-            <div class="telem-stats-grid">
-              <div class="t-stat-card">
-                <span class="t-lbl">GPU VRAM Used</span>
-                <strong class="t-val text-cyan" id="monitorVramVal">38.4 / 80.0 GB</strong>
-                <span class="t-sub">NVIDIA H100 SXM 80GB</span>
-              </div>
-
-              <div class="t-stat-card">
-                <span class="t-lbl">Inference Speed</span>
-                <strong class="t-val text-green" id="monitorSpeedVal">42.5 Tokens/sec</strong>
-                <span class="t-sub">Llama-3.3-70B Q4_K_M</span>
-              </div>
-
-              <div class="t-stat-card">
-                <span class="t-lbl">GPU Temperature</span>
-                <strong class="t-val text-amber">54.2 °C</strong>
-                <span class="t-sub">Fan Speed: 62%</span>
-              </div>
-
-              <div class="t-stat-card">
-                <span class="t-lbl">Vector Memory</span>
-                <strong class="t-val text-cyan">14,250 Chunks</strong>
-                <span class="t-sub">ChromaDB In-Memory Store</span>
-              </div>
-            </div>
-
-            <div class="chart-panel">
-              <h3>Token Generation Latency & VRAM Allocation Curve</h3>
-              <div class="canvas-frame">
-                <canvas id="monitorCanvas" width="900" height="260"></canvas>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <!-- VIEW 7: SETTINGS -->
-        <section class="view-panel" id="view-settings">
-          <div class="settings-container">
-            <div class="settings-header">
-              <h2>Model Runtime & Quantization Configuration</h2>
-              <p>Configure Open-Weight LLMs, Quantization, and Local REST Endpoints</p>
-            </div>
-
-            <div class="settings-grid">
-              <!-- Left: Model Profiles -->
-              <div class="set-card">
-                <h3>1. Select Open-Weight LLM Profile</h3>
-                <div class="model-opt-list">
-                  <div class="model-opt-card active" data-model="llama-3.3-70b" onclick="app.selectModelProfile('llama-3.3-70b')">
-                    <div class="opt-hdr">
-                      <strong>Llama-3.3-70B-Instruct</strong>
-                      <span class="tag tag-cyan">Recommended</span>
-                    </div>
-                    <p>Meta's flagship open reasoner for industrial diagnostic engineering.</p>
-                    <span class="opt-meta">Context: 128k • VRAM Req: ~38.4 GB (Q4)</span>
-                  </div>
-
-                  <div class="model-opt-card" data-model="qwen2.5-vl-72b" onclick="app.selectModelProfile('qwen2.5-vl-72b')">
-                    <div class="opt-hdr">
-                      <strong>Qwen2.5-VL-72B Multimodal</strong>
-                      <span class="tag tag-purple">Vision Leader</span>
-                    </div>
-                    <p>Multimodal vision model for thermal optical defect scanning.</p>
-                    <span class="opt-meta">Context: 32k • VRAM Req: ~42.0 GB (AWQ)</span>
-                  </div>
-
-                  <div class="model-opt-card" data-model="deepseek-r1-70b" onclick="app.selectModelProfile('deepseek-r1-70b')">
-                    <div class="opt-hdr">
-                      <strong>DeepSeek-R1-Distill-Llama-70B</strong>
-                      <span class="tag tag-green">CoT Reasoning</span>
-                    </div>
-                    <p>Chain-of-Thought reasoning for root cause analysis.</p>
-                    <span class="opt-meta">Context: 64k • VRAM Req: ~39.2 GB (Q4)</span>
-                  </div>
-
-                  <div class="model-opt-card" data-model="mistral-nemo-12b" onclick="app.selectModelProfile('mistral-nemo-12b')">
-                    <div class="opt-hdr">
-                      <strong>Mistral-NeMo-12B (Fast Edge)</strong>
-                      <span class="tag tag-amber">Low Latency</span>
-                    </div>
-                    <p>High-speed model for rapid SCADA telemetry auditing.</p>
-                    <span class="opt-meta">Context: 128k • VRAM Req: ~7.2 GB (FP16)</span>
-                  </div>
-                </div>
-              </div>
-
-              <!-- Right: Parameters -->
-              <div class="set-card">
-                <h3>2. Quantization & Inference Engine</h3>
-                
-                <div class="form-group">
-                  <label>Quantization Method:</label>
-                  <select id="quantSelect" class="select-input" onchange="app.updateQuantization(this.value)">
-                    <option value="Q4_K_M" selected>GGUF Q4_K_M (Optimal Memory/Accuracy Balance)</option>
-                    <option value="AWQ">AWQ 4-bit (TensorRT-LLM GPU Accelerated)</option>
-                    <option value="Q8_0">GGUF Q8_0 (Near Lossless Precision)</option>
-                    <option value="FP16">FP16 Unquantized (Maximum VRAM Overhead)</option>
-                  </select>
-                </div>
-
-                <div class="form-group">
-                  <label>Temperature: <span id="tempVal">0.2</span></label>
-                  <input type="range" id="tempRange" min="0" max="1" step="0.05" value="0.2" oninput="document.getElementById('tempVal').innerText=this.value">
-                </div>
-
-                <div class="form-group">
-                  <label>Local Endpoint Connector:</label>
-                  <div class="endpoint-input-wrap">
-                    <input type="text" id="endpointUrl" class="text-input" value="http://localhost:11434/api/generate">
-                    <button class="btn btn-sm btn-outline" onclick="app.testLocalEndpoint()">Ping Server</button>
-                  </div>
-                  <span class="endpoint-status text-green" id="endpointStatus">Status: Using Built-in Sovereign Engine</span>
-                </div>
-
-                <div class="vram-estimator-box">
-                  <div class="est-row">
-                    <span>Estimated GPU VRAM Consumption:</span>
-                    <strong id="estVramVal" class="text-cyan">38.4 GB / 80.0 GB</strong>
-                  </div>
-                  <div class="est-row">
-                    <span>Estimated Generation Speed:</span>
-                    <strong id="estSpeedVal" class="text-green">42.5 Tokens/sec</strong>
-                  </div>
-                </div>
-
-                <div class="set-actions">
-                  <button class="btn btn-primary" onclick="app.applyModelSettings()">Save Configuration</button>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-
-      </main>
+  <!-- FLOATING LEFT EDGE DRAWER TRIGGER TAB -->
+  <div class="drawer-trigger" id="drawerTrigger" onmouseenter="app.openDrawer()" onclick="app.openDrawer()" title="Open Navigation Drawer">
+    <div class="trigger-chevrons">
+      <svg class="chevron-icon" viewBox="0 0 24 24"><path fill="currentColor" d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg>
+      <svg class="chevron-icon" viewBox="0 0 24 24"><path fill="currentColor" d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg>
+      <svg class="chevron-icon" viewBox="0 0 24 24"><path fill="currentColor" d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg>
     </div>
+    <span class="trigger-label">MENU</span>
+  </div>
+
+  <!-- SLIDE-OUT HOVER NAVIGATION SIDE DRAWER -->
+  <aside class="side-drawer" id="sideDrawer" onmouseleave="app.handleDrawerMouseLeave()">
+    
+    <!-- Drawer Brand Header & Pin Lock Toggle -->
+    <div class="drawer-brand-hdr">
+      <div class="brand-title">
+        <svg class="brand-logo-icon" viewBox="0 0 24 24"><path fill="currentColor" d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+        <div class="brand-text-group">
+          <span class="brand-name">AURA AI</span>
+          <span class="brand-sub">Sovereign Intelligence</span>
+        </div>
+      </div>
+      <button class="pin-toggle-btn" id="pinToggleBtn" onclick="app.togglePin()" title="Lock/Unlock Sidebar Open">
+        <svg class="pin-icon" viewBox="0 0 24 24"><path fill="currentColor" d="M16 9V4l1 0V2H7v2l1 0v5L6 11v2h5v7l1 1 1-1v-7h5v-2l-2-2z"/></svg>
+      </button>
+    </div>
+
+    <!-- Drawer Menu Modules (8 Dynamic Views - Zero Emojis) -->
+    <div class="drawer-menu-scroll">
+      
+      <div class="menu-section-label">Core Workspaces</div>
+      
+      <button class="drawer-menu-item active" id="nav-btn-console" onclick="app.switchView('console')">
+        <svg class="m-icon" viewBox="0 0 24 24"><path fill="currentColor" d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm-5 14H4v-4h11v4zm0-5H4V9h11v4zm5 5h-4V9h4v9z"/></svg>
+        <span>Agent Console</span>
+      </button>
+
+      <button class="drawer-menu-item" id="nav-btn-inspector" onclick="app.switchView('inspector')">
+        <svg class="m-icon" viewBox="0 0 24 24"><path fill="currentColor" d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-2 10h-4v4h-2v-4H7v-2h4V7h2v4h4v2z"/></svg>
+        <span>Visual & SCADA</span>
+      </button>
+
+      <button class="drawer-menu-item" id="nav-btn-vault" onclick="app.switchView('vault')">
+        <svg class="m-icon" viewBox="0 0 24 24"><path fill="currentColor" d="M12 3C7.58 3 4 4.79 4 7v10c0 2.21 3.58 4 8 4s8-1.79 8-4V7c0-2.21-3.58-4-8-4zm0 2c3.87 0 6 1.3 6 2s-2.13 2-6 2-6-1.3-6-2 2.13-2 6-2zm0 14c-3.87 0-6-1.3-6-2v-2.24c1.47.78 3.63 1.24 6 1.24s4.53-.46 6-1.24V17c0 .7-2.13 2-6 2z"/></svg>
+        <span>Data Vault</span>
+      </button>
+
+      <div class="menu-section-label">Industrial Modules</div>
+
+      <button class="drawer-menu-item" id="nav-btn-analytics" onclick="app.switchView('analytics')">
+        <svg class="m-icon" viewBox="0 0 24 24"><path fill="currentColor" d="M16 6l2.29 2.29-4.88 4.88-4-4L2 16.59 3.41 18l6-6 4 4 6.3-6.29L22 12V6z"/></svg>
+        <span>Predictive Analytics</span>
+      </button>
+
+      <button class="drawer-menu-item" id="nav-btn-logs" onclick="app.switchView('logs')">
+        <svg class="m-icon" viewBox="0 0 24 24"><path fill="currentColor" d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg>
+        <span>Equipment Telemetry Logs</span>
+      </button>
+
+      <button class="drawer-menu-item" id="nav-btn-security" onclick="app.switchView('security')">
+        <svg class="m-icon" viewBox="0 0 24 24"><path fill="currentColor" d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 10.99h7c-.53 4.12-3.28 7.79-7 8.94V12H5V6.3l7-3.11v8.8z"/></svg>
+        <span>Security & Access Center</span>
+      </button>
+
+      <button class="drawer-menu-item" id="nav-btn-sop" onclick="app.switchView('sop')">
+        <svg class="m-icon" viewBox="0 0 24 24"><path fill="currentColor" d="M15 9H9v6h6V9zm-2 4h-2v-2h2v2zm8-2V9h-2V7c0-1.1-.9-2-2-2h-2V3h-2v2H9V3H7v2H5c-1.1 0-2 .9-2 2v2H1v2h2v2H1v2h2v2c0 1.1.9 2 2 2h2v2h2v-2h2v2h2v-2h2c1.1 0 2-.9 2-2v-2h2v-2h-2v-2h2zm-4 6H5V7h14v10z"/></svg>
+        <span>SOP Automation Builder</span>
+      </button>
+
+      <button class="drawer-menu-item" id="nav-btn-settings" onclick="app.switchView('settings')">
+        <svg class="m-icon" viewBox="0 0 24 24"><path fill="currentColor" d="M19.43 12.98c.04-.32.07-.64.07-.98s-.03-.66-.07-.98l2.11-1.65c.19-.15.24-.42.12-.64l-2-3.46c-.12-.22-.39-.3-.61-.22l-2.49 1c-.52-.4-1.08-.73-1.69-.98l-.38-2.65C14.46 2.18 14.25 2 14 2h-4c-.25 0-.46.18-.49.42l-.38 2.65c-.61.25-1.17.59-1.69.98l-2.49-1c-.23-.09-.49 0-.61.22l-2 3.46c-.13.22-.07.49.12.64l2.11 1.65c-.04.32-.07.65-.07.98s.03.66.07.98l-2.11 1.65c-.19.15-.24.42-.12.64l2 3.46c.12.22.39.3.61.22l2.49-1c.52.4 1.08.73 1.69.98l.38 2.65c.03.24.24.42.49.42h4c.25 0 .46-.18.49-.42l.38-2.65c.61-.25 1.17-.59 1.69-.98l2.49 1c.23.09.49 0 .61-.22l2-3.46c.12-.22.07-.49-.12-.64l-2.11-1.65zM12 15.5c-1.93 0-3.5-1.57-3.5-3.5s1.57-3.5 3.5-3.5 3.5 1.57 3.5 3.5-1.57 3.5-3.5 3.5z"/></svg>
+        <span>Advanced Settings</span>
+      </button>
+
+    </div>
+
+    <!-- Drawer Telemetry Footer Block -->
+    <div class="drawer-footer-block">
+      <!-- Role Switcher -->
+      <div class="footer-row">
+        <span class="f-lbl">Persona Role:</span>
+        <select id="rbacSelect" class="drawer-select" onchange="app.switchRBACPersona(this.value)">
+          <option value="engineer" selected>Engineer</option>
+          <option value="operator">Operator</option>
+          <option value="admin">Admin</option>
+        </select>
+      </div>
+
+      <!-- LLM Runtime Status Card -->
+      <div class="telemetry-card" onclick="app.switchView('settings')">
+        <div class="t-card-hdr">
+          <span class="green-status-dot"></span>
+          <span class="t-card-title" id="drawerModelName">LLaMA-3.3-70B</span>
+        </div>
+        <span class="t-card-sub" id="drawerQuantName">GGUF Q4_K_M • 42.5 T/s</span>
+      </div>
+
+      <!-- Air-Gap Security Badge -->
+      <div class="airgap-pill-card" onclick="app.switchView('security')">
+        <svg class="ag-icon" viewBox="0 0 24 24"><path fill="currentColor" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
+        <div class="ag-txt-wrap">
+          <strong>100% Air-Gapped</strong>
+          <span>Zero External WAN Egress</span>
+        </div>
+      </div>
+
+      <!-- Real-Time VRAM Gauge -->
+      <div class="vram-gauge-card">
+        <div class="v-gauge-hdr">
+          <span>VRAM Allocation</span>
+          <strong id="drawerVramTxt">38.4 / 80 GB</strong>
+        </div>
+        <div class="v-gauge-track">
+          <div class="v-gauge-fill" id="drawerVramFill" style="width: 48%;"></div>
+        </div>
+      </div>
+    </div>
+
+  </aside>
+
+  <!-- MAIN CANVAS & CONTENT LAYOUT -->
+  <div class="app-canvas">
+    
+    <!-- TOP UTILITY BAR -->
+    <header class="top-utility-nav">
+      <div class="top-nav-left">
+        <button class="top-drawer-open-btn" onclick="app.openDrawer()" title="Open Sidebar Menu">
+          <svg class="top-btn-icon" viewBox="0 0 24 24"><path fill="currentColor" d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/></svg>
+        </button>
+        <div class="global-search-box">
+          <svg class="search-svg" viewBox="0 0 24 24"><path fill="currentColor" d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
+          <input type="text" id="globalSearchInput" placeholder="Search industrial assets, logs, SOP protocols..." oninput="app.handleGlobalSearch()">
+        </div>
+      </div>
+
+      <div class="top-nav-right">
+        <div class="system-health-pill">
+          <span class="pulse-green-dot"></span>
+          <span>System Healthy</span>
+        </div>
+
+        <button class="notif-btn" onclick="app.showNotifAlert()" title="System Alerts">
+          <svg class="notif-svg" viewBox="0 0 24 24"><path fill="currentColor" d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.89 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"/></svg>
+          <span class="notif-num">2</span>
+        </button>
+
+        <div class="user-profile-badge">
+          <div class="avatar-circle">PE</div>
+          <div class="user-txt">
+            <span class="u-name">Plant Engineer</span>
+            <span class="u-dept">MRPL Datacenter</span>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- MAIN VIEWPORT CONTAINER FOR 8 DYNAMIC VIEWS -->
+    <main class="main-viewport-content">
+
+      <!-- VIEW 1: AGENT CONSOLE -->
+      <section class="view-panel active" id="view-console">
+        <div class="console-flow-wrapper">
+          
+          <!-- Scenario Quick Chips -->
+          <div class="quick-scenarios-row">
+            <span class="scen-hdr-lbl">Industrial Scenarios:</span>
+            <div class="scen-pills-list">
+              <button class="scen-chip scen-critical" onclick="app.runPresetQuery(0)">
+                <svg class="chip-svg" viewBox="0 0 24 24"><path fill="currentColor" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg>
+                Pump 102 Seal Fail
+              </button>
+
+              <button class="scen-chip scen-warning" onclick="app.runPresetQuery(1)">
+                <svg class="chip-svg" viewBox="0 0 24 24"><path fill="currentColor" d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"/></svg>
+                Flange V88 Heat Leak
+              </button>
+
+              <button class="scen-chip scen-info" onclick="app.runPresetQuery(2)">
+                <svg class="chip-svg" viewBox="0 0 24 24"><path fill="currentColor" d="M11 15h2v2h-2zm0-8h2v6h-2zm1-5C6.47 2 2 6.47 2 12s4.47 10 10 10 10-4.47 10-10S17.53 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"/></svg>
+                Boiler B-3 Combustion
+              </button>
+
+              <button class="scen-chip scen-success" onclick="app.runPresetQuery(3)">
+                <svg class="chip-svg" viewBox="0 0 24 24"><path fill="currentColor" d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z"/></svg>
+                CDU Unit Audit
+              </button>
+            </div>
+          </div>
+
+          <!-- Prompt Command Card -->
+          <div class="command-card">
+            <textarea id="queryInput" placeholder="Ask Aura AI about equipment manuals, telemetry logs, or thermal scans (e.g., 'What is causing vibration on Pump 102?')..."></textarea>
+            <div class="command-card-footer">
+              <span class="shortcut-tag">Press <strong>Ctrl + Enter</strong> to execute</span>
+              <button class="btn btn-cyan" onclick="app.executeAgentQuery()">
+                <svg class="b-icon" viewBox="0 0 24 24"><path fill="currentColor" d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
+                Execute Agent Workflow
+              </button>
+            </div>
+          </div>
+
+          <!-- LangGraph Multi-Agent Execution Progress Card -->
+          <div class="pipeline-progress-card">
+            <div class="pipe-card-hdr">
+              <div class="p-hdr-left">
+                <svg class="p-spark-icon" viewBox="0 0 24 24"><path fill="currentColor" d="M12 2L9.19 8.63 2 9.24l5.46 4.73L5.82 21 12 17.27 18.18 21l-1.64-7.03L22 9.24l-7.19-.61z"/></svg>
+                <h3>LangGraph Multi-Agent Pipeline Visualization</h3>
+              </div>
+              <div class="p-hdr-right">
+                <span class="state-pill" id="workflowStatusBadge">Idle</span>
+                <span class="timer-pill" id="executionTimer">0.00s</span>
+              </div>
+            </div>
+
+            <!-- Nodes Track -->
+            <div class="nodes-horizontal-track">
+              <div class="node-step-card" id="node-guardrail" onclick="app.inspectAgentNode('guardrail')">
+                <div class="node-step-hdr">
+                  <svg class="step-svg" viewBox="0 0 24 24"><path fill="currentColor" d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4z"/></svg>
+                  <span>Security Policy</span>
+                </div>
+                <span class="node-step-state">Ready</span>
+              </div>
+
+              <div class="track-line"></div>
+
+              <div class="node-step-card" id="node-vector" onclick="app.inspectAgentNode('vector')">
+                <div class="node-step-hdr">
+                  <svg class="step-svg" viewBox="0 0 24 24"><path fill="currentColor" d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5z"/></svg>
+                  <span>Vector RAG</span>
+                </div>
+                <span class="node-step-state">Ready</span>
+              </div>
+
+              <div class="track-line"></div>
+
+              <div class="node-step-card" id="node-vision" onclick="app.inspectAgentNode('vision')">
+                <div class="node-step-hdr">
+                  <svg class="step-svg" viewBox="0 0 24 24"><path fill="currentColor" d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5z"/></svg>
+                  <span>Vision Scan</span>
+                </div>
+                <span class="node-step-state">Ready</span>
+              </div>
+
+              <div class="track-line"></div>
+
+              <div class="node-step-card" id="node-reasoner" onclick="app.inspectAgentNode('reasoner')">
+                <div class="node-step-hdr">
+                  <svg class="step-svg" viewBox="0 0 24 24"><path fill="currentColor" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93z"/></svg>
+                  <span>Reasoning Engine</span>
+                </div>
+                <span class="node-step-state">Ready</span>
+              </div>
+
+              <div class="track-line"></div>
+
+              <div class="node-step-card" id="node-synthesizer" onclick="app.inspectAgentNode('synthesizer')">
+                <div class="node-step-hdr">
+                  <svg class="step-svg" viewBox="0 0 24 24"><path fill="currentColor" d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-2 10h-4v4h-2v-4H7v-2h4V7h2v4h4v2z"/></svg>
+                  <span>SOP Builder</span>
+                </div>
+                <span class="node-step-state">Ready</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Main Diagnostic Output Block -->
+          <div class="output-block-wrapper" id="outputContainer">
+            <div class="empty-state-card">
+              <svg class="es-svg" viewBox="0 0 24 24"><path fill="currentColor" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg>
+              <h3>Aura AI Sovereign Assistant Ready</h3>
+              <p>Select an industrial failure scenario above or type a prompt to execute the local multi-agent workflow.</p>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- VIEW 2: VISUAL & SCADA -->
+      <section class="view-panel" id="view-inspector">
+        <div class="inspector-dashboard-grid">
+          
+          <!-- Optical Thermal Defect Canvas -->
+          <div class="dash-card">
+            <div class="d-card-hdr">
+              <div>
+                <h3 id="activeImageTitle">Pump 102 Assembly Scan</h3>
+                <span class="d-sub-txt">Multimodal Thermal Defect Scan</span>
+              </div>
+              <div class="canvas-toggles">
+                <label class="c-toggle">
+                  <input type="checkbox" id="toggleThermal" checked onchange="app.renderVisualInspector()">
+                  <span>Thermal Matrix</span>
+                </label>
+                <label class="c-toggle">
+                  <input type="checkbox" id="toggleDefects" checked onchange="app.renderVisualInspector()">
+                  <span>AI Bounding Boxes</span>
+                </label>
+              </div>
+            </div>
+
+            <div class="canvas-viewport-box">
+              <canvas id="inspectionCanvas" width="560" height="340"></canvas>
+            </div>
+
+            <div class="vision-parameters-grid">
+              <div class="v-param-item">
+                <span class="p-lbl">Defect Classification</span>
+                <strong class="p-val text-red" id="valDefectType">Bearing Overheat</strong>
+              </div>
+              <div class="v-param-item">
+                <span class="p-lbl">Peak Temperature</span>
+                <strong class="p-val text-red" id="valPeakTemp">94.8 °C</strong>
+              </div>
+              <div class="v-param-item">
+                <span class="p-lbl">Structural Wear</span>
+                <strong class="p-val text-amber" id="valIntegrity">Critical Friction Wear</strong>
+              </div>
+              <div class="v-param-item">
+                <span class="p-lbl">Vision Confidence</span>
+                <strong class="p-val text-green" id="valConfidence">98.4%</strong>
+              </div>
+            </div>
+          </div>
+
+          <!-- SCADA Live Telemetry Feed -->
+          <div class="dash-card">
+            <div class="d-card-hdr">
+              <div>
+                <h3>SCADA Live Telemetry Feed</h3>
+                <span class="d-sub-txt">ISO 10816 Vibration & Temperature Sensors</span>
+              </div>
+              <div class="stream-actions-group">
+                <span class="live-dot" id="liveStreamDot"></span>
+                <button class="btn btn-sm btn-outline" id="btnLiveToggle" onclick="app.toggleLiveSCADA()">Stream Live</button>
+              </div>
+            </div>
+
+            <div class="canvas-viewport-box">
+              <canvas id="telemetryCanvas" width="560" height="280"></canvas>
+            </div>
+
+            <!-- Alarm Banner -->
+            <div class="alarm-alert-banner hidden" id="anomalyAlertBox">
+              <div class="alarm-left-info">
+                <svg class="al-svg" viewBox="0 0 24 24"><path fill="currentColor" d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"/></svg>
+                <span><strong>CRITICAL SPIKE:</strong> Vibration breached 8.00 mm/s on Pump 102!</span>
+              </div>
+              <button class="btn btn-sm btn-danger" onclick="app.runPresetQuery(0)">Investigate</button>
+            </div>
+
+            <div class="telemetry-controls-bar">
+              <div class="tf-group">
+                <button class="tf-btn" id="tf-24h" onclick="app.setTelemetryTimeframe('24h')">24h</button>
+                <button class="tf-btn active" id="tf-7d" onclick="app.setTelemetryTimeframe('7d')">7d Spike</button>
+                <button class="tf-btn" id="tf-30d" onclick="app.setTelemetryTimeframe('30d')">30d Baseline</button>
+              </div>
+              <div class="stat-readout">
+                <span>Peak Vibration:</span>
+                <strong class="text-red" id="statPeakVib">8.42 mm/s</strong>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- VIEW 3: DATA VAULT -->
+      <section class="view-panel" id="view-vault">
+        <div class="vault-panel-wrapper">
+          <div class="v-top-bar">
+            <div>
+              <h2>Confidential Data Vault</h2>
+              <p>On-premise files & vector chunks indexed using BGE Large in ChromaDB</p>
+            </div>
+            <div class="v-search-box">
+              <input type="text" id="vaultSearchInput" placeholder="Search vector store..." oninput="app.filterVaultFiles()">
+            </div>
+          </div>
+
+          <div class="v-filter-bar">
+            <button class="vf-btn active" data-tab="all" onclick="app.switchVaultFilter('all')">All Files</button>
+            <button class="vf-btn" data-tab="docs" onclick="app.switchVaultFilter('docs')">Manuals & Logs</button>
+            <button class="vf-btn" data-tab="images" onclick="app.switchVaultFilter('images')">Thermal Scans</button>
+            <button class="vf-btn" data-tab="custom" onclick="app.switchVaultFilter('custom')">User Ingested</button>
+          </div>
+
+          <div class="ingest-dropzone" id="dropZone" onclick="app.triggerFileUpload()">
+            <svg class="dz-svg" viewBox="0 0 24 24"><path fill="currentColor" d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96zM14 13v4h-4v-4H7l5-5 5 5h-3z"/></svg>
+            <strong>Click or Drag Files Here to Ingest into Vector Index</strong>
+            <span>Supports PDF, CSV, TXT, and Thermal Images (100% Air-Gapped Local Processing)</span>
+            <input type="file" id="fileInput" hidden onchange="app.handleFileSelect(event)">
+          </div>
+
+          <div class="vault-files-grid" id="fileList">
+            <!-- Files loaded dynamically -->
+          </div>
+        </div>
+      </section>
+
+      <!-- VIEW 4: PREDICTIVE ANALYTICS -->
+      <section class="view-panel" id="view-analytics">
+        <div class="analytics-wrapper">
+          <div class="an-hdr">
+            <h2>Predictive Failure & MTBF Analytics</h2>
+            <p>Cross-equipment MTBF predictions & anomaly distribution graphs</p>
+          </div>
+
+          <div class="an-stats-row">
+            <div class="an-stat-card">
+              <span class="a-lbl">Average MTBF Score</span>
+              <strong class="a-val text-green">8,420 Hours</strong>
+              <span class="a-sub">+4.2% vs target</span>
+            </div>
+            <div class="an-stat-card">
+              <span class="a-lbl">High Risk Assets</span>
+              <strong class="a-val text-red">2 Machinery Tags</strong>
+              <span class="a-sub">Pump 102 & Flange V88</span>
+            </div>
+            <div class="an-stat-card">
+              <span class="a-lbl">Vibration Anomaly Spike</span>
+              <strong class="a-val text-amber">142 Hz Harmonic</strong>
+              <span class="a-sub">Suction line recirculation</span>
+            </div>
+            <div class="an-stat-card">
+              <span class="a-lbl">Preventative Health</span>
+              <strong class="a-val text-cyan">84.5% Overall Index</strong>
+              <span class="a-sub">48 Machinery Tags Active</span>
+            </div>
+          </div>
+
+          <div class="an-chart-card">
+            <h3>CDU Unit 30-Day Failure Trend Curve</h3>
+            <div class="canvas-viewport-box">
+              <canvas id="analyticsCanvas" width="900" height="260"></canvas>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- VIEW 5: EQUIPMENT LOGS & TELEMETRY -->
+      <section class="view-panel" id="view-logs">
+        <div class="logs-wrapper">
+          <div class="l-hdr">
+            <h2>Equipment Telemetry & Sensor Logs</h2>
+            <p>24/7 Real-Time Log Records from Refinery Machinery Tags</p>
+          </div>
+
+          <div class="logs-table-card">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Timestamp</th>
+                  <th>Tag ID</th>
+                  <th>Equipment Name</th>
+                  <th>Sensor Metric</th>
+                  <th>Recorded Value</th>
+                  <th>ISO Limit</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>17:25:01</td>
+                  <td>PUMP-102-VIB</td>
+                  <td>Centrifugal Pump 102 Drive</td>
+                  <td>Vibration Peak</td>
+                  <td class="text-red">8.42 mm/s</td>
+                  <td>4.50 mm/s</td>
+                  <td><span class="tag-badge bg-red">CRITICAL</span></td>
+                </tr>
+                <tr>
+                  <td>17:24:45</td>
+                  <td>PUMP-102-TEMP</td>
+                  <td>Pump 102 Primary Bearing</td>
+                  <td>Thermal Surface</td>
+                  <td class="text-red">94.8 °C</td>
+                  <td>65.0 °C</td>
+                  <td><span class="tag-badge bg-red">CRITICAL</span></td>
+                </tr>
+                <tr>
+                  <td>17:22:10</td>
+                  <td>FLANGE-V88-TEMP</td>
+                  <td>CDU Pipe Flange V88</td>
+                  <td>Thermal Camera</td>
+                  <td class="text-amber">148.5 °C</td>
+                  <td>65.0 °C</td>
+                  <td><span class="tag-badge bg-amber">WARNING</span></td>
+                </tr>
+                <tr>
+                  <td>17:15:30</td>
+                  <td>BOILER-B3-PRESS</td>
+                  <td>Boiler B-3 Steam Valve</td>
+                  <td>Discharge Pressure</td>
+                  <td class="text-amber">34.4 Bar</td>
+                  <td>42.0 Bar</td>
+                  <td><span class="tag-badge bg-amber">WARNING</span></td>
+                </tr>
+                <tr>
+                  <td>17:00:00</td>
+                  <td>CDU-UNIT-NORM</td>
+                  <td>CDU Main Distillation Column</td>
+                  <td>Base Pressure</td>
+                  <td class="text-green">2.10 Bar</td>
+                  <td>3.00 Bar</td>
+                  <td><span class="tag-badge bg-green">NORMAL</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- VIEW 6: SECURITY & ACCESS CENTER -->
+      <section class="view-panel" id="view-security">
+        <div class="sec-wrapper">
+          <div class="s-hdr">
+            <h2>Security & Access Control Center</h2>
+            <p>Air-Gap Perimeter Enforcement, Firewall Rules & Immutable Audit Trails</p>
+          </div>
+
+          <div class="sec-grid-2">
+            <div class="sec-box-card">
+              <h3>Air-Gap Network Isolation Rules</h3>
+              <div class="rules-stack">
+                <div class="r-item"><span>WAN Egress Policy:</span> <strong class="text-green">REJECT ALL (0.0.0.0/0)</strong></div>
+                <div class="r-item"><span>Local REST Binding:</span> <strong>127.0.0.1:8000</strong></div>
+                <div class="r-item"><span>Hardware Crypto Chip:</span> <strong class="text-green">TPM 2.0 VERIFIED</strong></div>
+              </div>
+            </div>
+
+            <div class="sec-box-card">
+              <h3>Data Masking & PII Sanitizer</h3>
+              <div class="rules-stack">
+                <div class="r-item"><span>Employee Serial Masking:</span> <strong class="text-cyan">ENABLED (SHA-256)</strong></div>
+                <div class="r-item"><span>Location Scrubbing:</span> <strong class="text-cyan">ACTIVE</strong></div>
+                <div class="r-item"><span>Audit Log Persistence:</span> <strong>IMMUTABLE DB</strong></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="audit-log-card">
+            <div class="al-hdr">
+              <h3>Live Air-Gap Security Audit Stream</h3>
+              <button class="btn btn-sm btn-outline" onclick="app.exportAuditLogJSON()">Export JSON Log</button>
+            </div>
+            <div class="log-stream-box" id="auditLogWindow">
+              <div class="l-entry success">[AIRGAP 17:25:01] Firewall Egress Policy: REJECT ALL WAN (0.0.0.0/0).</div>
+              <div class="l-entry success">[AIRGAP 17:25:02] Local LLM Binding: 127.0.0.1:8000.</div>
+              <div class="l-entry info">[AIRGAP 17:25:05] ChromaDB Vector Store: 14,250 chunks verified intact.</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- VIEW 7: SOP AUTOMATION BUILDER -->
+      <section class="view-panel" id="view-sop">
+        <div class="sop-wrapper">
+          <div class="sop-hdr-bar">
+            <div>
+              <h2>SOP Automation Builder & Records</h2>
+              <p>Standard Operating Procedures catalog & emergency response protocols</p>
+            </div>
+            <div class="sop-filter-input">
+              <input type="text" placeholder="Filter SOP manuals..." oninput="app.filterSOPList(this.value)">
+            </div>
+          </div>
+
+          <div class="sop-cards-grid" id="sopGrid">
+            <div class="sop-item-card">
+              <div class="sop-item-hdr">
+                <svg class="sop-svg" viewBox="0 0 24 24"><path fill="currentColor" d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg>
+                <div>
+                  <h4>SOP-MRPL-P102-SEAL</h4>
+                  <span class="sop-tag">Centrifugal Pumps</span>
+                </div>
+              </div>
+              <p>Mechanical Seal Chamber Emergency Flushing Protocol (API Plan 11/52). Step-by-step seal failure isolation procedures.</p>
+              <div class="sop-date">Revision 4.2 • Updated Aug 2026</div>
+            </div>
+
+            <div class="sop-item-card">
+              <div class="sop-item-hdr">
+                <svg class="sop-svg" viewBox="0 0 24 24"><path fill="currentColor" d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg>
+                <div>
+                  <h4>SOP-MRPL-B3-PRESSURE</h4>
+                  <span class="sop-tag">Boilers & Steam Valves</span>
+                </div>
+              </div>
+              <p>Boiler B-3 Steam Discharge Drop & Damper Mismatch Corrective Protocol. Emergency pneumatic valve purging.</p>
+              <div class="sop-date">Revision 2.1 • Updated Jul 2026</div>
+            </div>
+
+            <div class="sop-item-card">
+              <div class="sop-item-hdr">
+                <svg class="sop-svg" viewBox="0 0 24 24"><path fill="currentColor" d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg>
+                <div>
+                  <h4>SOP-MRPL-FLANGE-TORQUE</h4>
+                  <span class="sop-tag">High Pressure Piping</span>
+                </div>
+              </div>
+              <p>Class 600 Pressure Flange Thermal Leakage & Stud Torque Re-Alignment sequence using hydraulic torque wrench.</p>
+              <div class="sop-date">Revision 5.0 • Updated Sep 2026</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- VIEW 8: ADVANCED SETTINGS -->
+      <section class="view-panel" id="view-settings">
+        <div class="set-wrapper">
+          <div class="set-hdr">
+            <h2>Advanced System Settings & LLM Engine</h2>
+            <p>Configure Open-Weight LLMs, Quantization parameters, and REST Endpoints</p>
+          </div>
+
+          <div class="set-grid-2">
+            <!-- Models List -->
+            <div class="set-panel-card">
+              <h3>1. Select Open-Weight LLM Profile</h3>
+              <div class="model-cards-stack">
+                <div class="m-card active" data-model="llama-3.3-70b" onclick="app.selectModelProfile('llama-3.3-70b')">
+                  <div class="m-card-top">
+                    <strong>LLaMA-3.3-70B-Instruct</strong>
+                    <span class="badge-tag tag-cyan">Recommended</span>
+                  </div>
+                  <p>Meta's flagship open reasoner for industrial diagnostic engineering.</p>
+                  <span class="m-card-meta">Context: 128k • VRAM Req: ~38.4 GB (Q4)</span>
+                </div>
+
+                <div class="m-card" data-model="qwen2.5-vl-72b" onclick="app.selectModelProfile('qwen2.5-vl-72b')">
+                  <div class="m-card-top">
+                    <strong>Qwen2.5-VL-72B Multimodal</strong>
+                    <span class="badge-tag tag-purple">Vision Leader</span>
+                  </div>
+                  <p>Multimodal vision leader for thermal optical defect scanning.</p>
+                  <span class="m-card-meta">Context: 32k • VRAM Req: ~42.0 GB (AWQ)</span>
+                </div>
+
+                <div class="m-card" data-model="deepseek-r1-70b" onclick="app.selectModelProfile('deepseek-r1-70b')">
+                  <div class="m-card-top">
+                    <strong>DeepSeek-R1-Distill-Llama-70B</strong>
+                    <span class="badge-tag tag-green">CoT Reasoning</span>
+                  </div>
+                  <p>Chain-of-Thought reasoning for root cause analysis.</p>
+                  <span class="m-card-meta">Context: 64k • VRAM Req: ~39.2 GB (Q4)</span>
+                </div>
+
+                <div class="m-card" data-model="mistral-nemo-12b" onclick="app.selectModelProfile('mistral-nemo-12b')">
+                  <div class="m-card-top">
+                    <strong>Mistral-NeMo-12B (Fast Edge)</strong>
+                    <span class="badge-tag tag-amber">Low Latency</span>
+                  </div>
+                  <p>High-speed model for rapid SCADA telemetry auditing.</p>
+                  <span class="m-card-meta">Context: 128k • VRAM Req: ~7.2 GB (FP16)</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Parameters Card -->
+            <div class="set-panel-card">
+              <h3>2. Quantization & Engine Parameters</h3>
+              
+              <div class="f-group">
+                <label>Quantization Mode:</label>
+                <select id="quantSelect" class="f-select" onchange="app.updateQuantization(this.value)">
+                  <option value="Q4_K_M" selected>GGUF Q4_K_M (Optimal Memory/Accuracy Balance)</option>
+                  <option value="AWQ">AWQ 4-bit (TensorRT-LLM GPU Accelerated)</option>
+                  <option value="Q8_0">GGUF Q8_0 (Near Lossless Precision)</option>
+                  <option value="FP16">FP16 Unquantized (Maximum VRAM Overhead)</option>
+                </select>
+              </div>
+
+              <div class="f-group">
+                <label>Temperature: <span id="tempVal">0.2</span></label>
+                <input type="range" id="tempRange" min="0" max="1" step="0.05" value="0.2" oninput="document.getElementById('tempVal').innerText=this.value">
+              </div>
+
+              <div class="f-group">
+                <label>Local Endpoint Connector:</label>
+                <div class="endpoint-input-wrap">
+                  <input type="text" id="endpointUrl" class="f-input" value="http://localhost:11434/api/generate">
+                  <button class="btn btn-sm btn-outline" onclick="app.testLocalEndpoint()">Ping Server</button>
+                </div>
+                <span class="endpoint-status text-green" id="endpointStatus">Status: Using Built-in Sovereign Engine</span>
+              </div>
+
+              <div class="vram-calc-box">
+                <div class="vc-row">
+                  <span>Estimated GPU VRAM Consumption:</span>
+                  <strong id="estVramVal" class="text-cyan">38.4 GB / 80.0 GB</strong>
+                </div>
+                <div class="vc-row">
+                  <span>Estimated Generation Speed:</span>
+                  <strong id="estSpeedVal" class="text-green">42.5 Tokens/sec</strong>
+                </div>
+              </div>
+
+              <div class="set-save-actions">
+                <button class="btn btn-cyan" onclick="app.applyModelSettings()">Save Configuration</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </main>
   </div>
 
   <!-- INSPECTION MODAL -->
