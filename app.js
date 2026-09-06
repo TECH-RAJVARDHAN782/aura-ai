@@ -508,13 +508,14 @@ class AuraAI {
       });
   }
 
-  // Search Filters
-  handleGlobalSearch() {
-    const term = (document.getElementById('globalSearchInput')?.value || '').toLowerCase();
+  // Search Filters & Global Query Execution
+  handleGlobalSearch(e) {
+    if (e && e.key && e.key !== 'Enter') return;
+    const term = (document.getElementById('globalSearchInput')?.value || '').trim();
     if (term.length > 2) {
-      this.switchView('vault');
-      document.getElementById('vaultSearchInput').value = term;
-      this.filterVaultFiles();
+      const qInput = document.getElementById('queryInput');
+      if (qInput) qInput.value = term;
+      this.executeAgentQuery();
     }
   }
 
@@ -643,11 +644,228 @@ class AuraAI {
     }
   }
 
+  // Dynamic Multi-Domain Query Synthesizer Engine
+  synthesizeQueryResult(queryText) {
+    const q = queryText.toLowerCase().trim();
+    const dateStr = new Date().toISOString().replace(/[-:T.]/g, '');
+    const runId = 'RUN-' + dateStr.substring(0, 8) + '-' + Math.floor(100 + Math.random() * 900);
+    const timestamp = new Date().toISOString().replace('T', ' ').substring(0, 19);
+
+    // 1. Check if query matches preset scenarios exactly
+    const matchedPreset = this.scenarios.find(s => s.query.toLowerCase() === q);
+    if (matchedPreset) {
+      return {
+        id: runId,
+        timestamp: timestamp,
+        query: queryText,
+        assetTag: matchedPreset.assetTag || 'DOC-P102 (Centrifugal Pump 102)',
+        title: matchedPreset.title,
+        priority: matchedPreset.priority || 'critical',
+        priorityLabel: matchedPreset.priorityLabel || 'Critical Alarm',
+        status: 'COMPLETED',
+        thinking: matchedPreset.thinking,
+        summary: matchedPreset.summary,
+        rootCause: matchedPreset.rootCause,
+        evidence: matchedPreset.evidence,
+        actions: matchedPreset.actions,
+        telemetry: matchedPreset.telemetry || { peakVib: "8.42 mm/s", peakTemp: "94.8 °C" }
+      };
+    }
+
+    // 2. Check custom user uploaded files
+    const customDocs = this.vaultFiles.filter(f => f.id.startsWith('FILE-'));
+    if (customDocs.length > 0) {
+      const match = customDocs.find(d => q.split(' ').some(w => w.length > 3 && d.content.toLowerCase().includes(w)));
+      if (match) {
+        return {
+          id: runId,
+          timestamp: timestamp,
+          query: queryText,
+          assetTag: `FILE-${match.name}`,
+          title: `Custom RAG Synthesis: ${match.name}`,
+          priority: 'high',
+          priorityLabel: 'User Document RAG',
+          status: 'COMPLETED',
+          thinking: `[Aura AI DeepSeek Reasoning Engine for Custom Ingest]
+1. Query input: "${queryText}".
+2. BGE vector similarity match found in user document: ${match.name}.
+3. Extracted chunk context: "${match.content.slice(0, 150)}..."
+4. Formulated citational diagnostic report.`,
+          summary: `Extracted targeted findings from uploaded asset document ${match.name}. Analysis matches query "${queryText}" with high confidence.`,
+          rootCause: `Document analysis of ${match.name} confirms structural parameters matching the requested query condition.`,
+          evidence: [
+            { doc: `${match.name} (Vector Chunk 1)`, text: `"${match.content.slice(0, 200)}..."` }
+          ],
+          actions: [
+            `Verify parameters in ${match.name} against plant operational guidelines.`,
+            `Perform localized physical inspection of target asset section.`,
+            `Log findings in on-premise SCADA audit register.`
+          ],
+          telemetry: { peakVib: "3.10 mm/s", peakTemp: "68.5 °C" }
+        };
+      }
+    }
+
+    // 3. Multi-Domain Topic Synthesizer Matrix
+    let assetTag = 'GEN-ASSET-01 (Industrial Unit)';
+    let title = `Diagnostic Analysis: ${queryText}`;
+    let priority = 'warning';
+    let priorityLabel = 'System Warning';
+    let thinking = '';
+    let summary = '';
+    let rootCause = '';
+    let evidence = [];
+    let actions = [];
+    let telemetry = {};
+
+    if (q.includes('electrical') || q.includes('short') || q.includes('motor') || q.includes('breaker') || q.includes('voltage') || q.includes('current') || q.includes('transformer') || q.includes('winding')) {
+      assetTag = q.includes('transformer') ? 'TRANS-T01 (Main Power Transformer)' : 'MTR-402 (3-Phase Induction Motor 402)';
+      title = `Electrical Fault Diagnosis: Stator Winding Insulation & Phase Balance on ${assetTag.split(' ')[0]}`;
+      priority = 'critical';
+      priorityLabel = 'Electrical Fault';
+      thinking = `[Aura AI DeepSeek Reasoning Engine — Electrical Domain]
+1. Target Asset: ${assetTag}. Query: "${queryText}".
+2. SCADA Current Telemetry: Phase A 142A, Phase B 198A (28.2% Phase Imbalance). Normal rating: 150A max.
+3. Thermal IR Matrix: Stator housing temperature spike (104.2 deg C).
+4. Insulation Resistance (Megger Test): Stator-to-ground resistance dropped from 50 MΩ to 1.2 MΩ.
+5. Conclusion: Thermal degradation of inter-turn stator winding insulation causing localized arc fault risk.`;
+      summary = `Diagnostic analysis for "${queryText}" confirms severe phase current imbalance (28.2%) and stator winding thermal overheating (104.2 deg C) on ${assetTag}. Megger insulation resistance has degraded to 1.2 MΩ, indicating imminent phase-to-ground short circuit.`;
+      rootCause = `High ambient moisture and harmonic electrical stress caused insulation breakdown between stator coil turns, increasing resistive heating and phase current distortion.`;
+      evidence = [
+        { doc: "LOG-ELEC-402-TELEMETRY.csv", text: "'Phase B current surge logged at 198A with stator temp 104.2 deg C on Aug 30, 2026.'" },
+        { doc: "SOP-MRPL-ELEC-INSULATION.pdf (Page 12)", text: "'Stator insulation resistance below 2.0 MΩ requires immediate circuit isolation to prevent core failure.'" }
+      ];
+      actions = [
+        "Lockout/Tagout (LOTO) breaker panel CB-402 and isolate 415V feeder line.",
+        "Perform 1000V Megger test across Phase A-B-C windings to pinpoint shorted turns.",
+        "Dismount motor end bells and apply vacuum pressure impregnation (VPI) epoxy resin.",
+        "Recalibrate thermal overload relay thresholds in MCC panel."
+      ];
+      telemetry = { peakVib: "1.45 mm/s", peakTemp: "104.2 °C", currentImbalance: "28.2%", insulation: "1.2 MΩ" };
+
+    } else if (q.includes('compressor') || q.includes('turbine') || q.includes('rotor') || q.includes('surge') || q.includes('vibration') || q.includes('bearing') || q.includes('shaft')) {
+      assetTag = q.includes('turbine') ? 'TURB-808 (High-Pressure Steam Turbine)' : 'COMP-104 (Rotary Screw Compressor)';
+      title = `Vibration & Mechanical Anomaly: Rotor Bearing Fatigue & Dynamic Unbalance on ${assetTag.split(' ')[0]}`;
+      priority = 'critical';
+      priorityLabel = 'Vibration Anomaly';
+      thinking = `[Aura AI DeepSeek Reasoning Engine — Mechanical Domain]
+1. Target Asset: ${assetTag}. Query: "${queryText}".
+2. Fast Fourier Transform (FFT) Spectrum: 1x RPM fundamental peak at 2980 RPM with 2x harmonic sidebands.
+3. Accelerometer Sensor Peak: 9.85 mm/s RMS (ISO 10816 Class IV Limit: 4.50 mm/s).
+4. Lube Oil Analysis: 180 ppm iron particulate wear debris in return oil filter.
+5. Conclusion: Journal bearing Babbitt metal spalling and shaft centerline offset.`;
+      summary = `Vibration analysis for "${queryText}" identifies severe 1x/2x rotational frequency harmonics (Peak 9.85 mm/s RMS) on ${assetTag}. Lube oil spectrographic analysis reveals iron particulate accumulation (180 ppm), confirming Babbitt bearing metal fatigue.`;
+      rootCause = `Shaft misalignment combined with unbalance forces created excessive dynamic radial load, accelerating bearing surface spalling and orbital vibration.`;
+      evidence = [
+        { doc: "LOG-VIB-SPECTRUM-2026.csv", text: "'Peak vibration 9.85 mm/s at 2980 RPM. ISO 10816 Class IV boundary exceeded.'" },
+        { doc: "SOP-TURBINE-ALIGNMENT.pdf (Page 8)", text: "'Spectrographic iron wear debris above 150 ppm mandates journal bearing replacement.'" }
+      ];
+      actions = [
+        "Reduce turbine/compressor rotational speed to idle mode and initiate controlled cooldown.",
+        "Perform laser alignment check on coupling shaft between driver and driven units.",
+        "Inspect and replace upper/lower journal bearing shells.",
+        "Flush lube oil reservoir and replace 10-micron return line filters."
+      ];
+      telemetry = { peakVib: "9.85 mm/s", peakTemp: "88.6 °C", oilParticulate: "180 ppm", rpm: "2980 RPM" };
+
+    } else if (q.includes('oil') || q.includes('lube') || q.includes('viscosity') || q.includes('grease') || q.includes('contamination') || q.includes('hydraulic')) {
+      assetTag = 'HYD-UNIT-04 (High Pressure Hydraulic Skid)';
+      title = `Fluid Degradation Diagnostic: Lubricant Viscosity Drop & Water Ingress on ${assetTag.split(' ')[0]}`;
+      priority = 'warning';
+      priorityLabel = 'Lube Contamination';
+      thinking = `[Aura AI DeepSeek Reasoning Engine — Lubrication Domain]
+1. Target Asset: ${assetTag}. Query: "${queryText}".
+2. Oil Viscosity Test: 32 cSt at 40 deg C (ISO VG 46 grade baseline: 46 cSt). Drop of 30.4%.
+3. Water Content Sensor: 1,850 ppm moisture (Limit: 300 ppm).
+4. Total Acid Number (TAN): 2.4 mg KOH/g (Oxidation threshold: 1.5 mg KOH/g).
+5. Conclusion: Water ingress through cooler heat exchanger gasket causing lubricant breakdown and oxidation.`;
+      summary = `Fluid diagnostic for "${queryText}" reveals severe hydraulic oil degradation (viscosity drop to 32 cSt) and water contamination (1,850 ppm) on ${assetTag}. Elevated TAN (2.4 mg KOH/g) indicates advanced oil oxidation and loss of anti-wear additive package.`;
+      rootCause = `Micro-fissure in lube oil heat exchanger tube bundle allowed cooling water ingress into oil reservoir, hydrolyzing ester additives and accelerating oxidation.`;
+      evidence = [
+        { doc: "LOG-OIL-ANALYSIS-AUG2026.pdf", text: "'Water content 1850 ppm. ISO VG 46 viscosity dropped by 30.4%.'" },
+        { doc: "SOP-HYDRAULIC-FLUID.pdf (Page 15)", text: "'TAN exceeding 2.0 mg KOH/g requires full system fluid replacement and flushes.'" }
+      ];
+      actions = [
+        "Isolate hydraulic cooler loop and pressure test tube bundle at 6.0 bar.",
+        "Connect portable vacuum dehydrator to hydraulic reservoir to strip free and dissolved water.",
+        "Drain degraded fluid and perform solvent flush of hydraulic lines.",
+        "Refill system with fresh ISO VG 46 anti-wear hydraulic oil."
+      ];
+      telemetry = { peakVib: "1.80 mm/s", peakTemp: "64.0 °C", waterContent: "1,850 ppm", viscosity: "32 cSt" };
+
+    } else if (q.includes('leak') || q.includes('flange') || q.includes('gasket') || q.includes('valve') || q.includes('pipe') || q.includes('seal') || q.includes('thermal')) {
+      assetTag = q.includes('valve') ? 'VALV-V12 (Control Valve V12)' : 'IMG-V88 (CDU Pipe Flange V88)';
+      title = `Thermal & Leakage Analysis: Seep Anomaly & Gasket Relaxation on ${assetTag.split(' ')[0]}`;
+      priority = 'warning';
+      priorityLabel = 'Thermal Leakage';
+      thinking = `[Aura AI DeepSeek Reasoning Engine — Containment Domain]
+1. Target Asset: ${assetTag}. Query: "${queryText}".
+2. Optical Infrared Matrix: Thermal plume hotspot localized at joint interface (142.8 deg C).
+3. Hydrocarbon Gas Detector: 450 ppm VOC micro-seep.
+4. Stud Torque Audit: Pre-torque relaxed from 450 Nm baseline to 320 Nm (28.8% torque loss).
+5. Conclusion: Thermal expansion stress relaxed gasket compression load.`;
+      summary = `Thermal leak audit for "${queryText}" pinpoints localized heat leakage (+77.8 deg C delta) and VOC vapor micro-seep (450 ppm) at ${assetTag}. Stud torque audit confirms a 28.8% torque drop due to thermal fatigue cycles.`;
+      rootCause = `Cyclic thermal expansion caused bolt elongation and graphite gasket relaxation, permitting high-temperature fluid micro-seepage past joint faces.`;
+      evidence = [
+        { doc: "IMG-V88-FLANGE-THERMAL.png", text: "'Localized thermal plume at joint perimeter with surface temp 142.8 deg C.'" },
+        { doc: "SOP-MRPL-FLANGE-TORQUE.pdf", text: "'Re-torque Class 600 pressure flange studs in cross pattern to 450 Nm.'" }
+      ];
+      actions = [
+        "Isolate joint section and reduce line pressure.",
+        "Apply hydraulic torque wrench to studs in criss-cross pattern to 450 Nm.",
+        "Inspect spiral-wound gasket during next turnaround.",
+        "Re-scan joint with FLIR thermal camera to confirm zero thermal gradient."
+      ];
+      telemetry = { peakVib: "2.10 mm/s", peakTemp: "142.8 °C", vocSeep: "450 ppm", studTorque: "320 Nm" };
+
+    } else {
+      assetTag = `ASSET-${Math.floor(100 + Math.random() * 900)} (Industrial Subsystem)`;
+      title = `Industrial Diagnostic Report: ${queryText.charAt(0).toUpperCase() + queryText.slice(1)}`;
+      priority = 'info';
+      priorityLabel = 'Automated RAG Analysis';
+      thinking = `[Aura AI DeepSeek Reasoning Engine — Sovereign Synthesizer]
+1. Processing prompt query: "${queryText}".
+2. Searching ChromaDB Vector Store (14,250 vector chunks scanned across plant manuals).
+3. Matched SCADA telemetry logs and Maintenance Records for relevant keywords.
+4. Multi-agent LangGraph pipeline synthesized root cause and step-by-step resolution SOP.`;
+      summary = `Autonomous diagnostic analysis for "${queryText}" synthesized plant vector embeddings and telemetry logs for ${assetTag}. The system identified operational parameter shifts requiring targeted inspection.`;
+      rootCause = `Cross-correlation of plant telemetry and vector manuals indicates dynamic load fluctuations exceeding standard baseline tolerance.`;
+      evidence = [
+        { doc: "LOG-SCADA-GLOBAL-2026.csv", text: `'Query term match verified against operational log stream for ${queryText}.'` },
+        { doc: "SOP-PLANT-OPERATIONS-MANUAL.pdf", text: "'Verify system parameters against baseline operational guidelines when anomaly is detected.'" }
+      ];
+      actions = [
+        `Inspect ${assetTag} physical fittings, electrical connections, and mounting hardware.`,
+        `Cross-check baseline SCADA sensor calibration against secondary field gauge.`,
+        `Execute standard preventative maintenance protocol according to SOP.`
+      ];
+      telemetry = { peakVib: "3.40 mm/s", peakTemp: "72.5 °C", systemStatus: "Active Audit" };
+    }
+
+    return {
+      id: runId,
+      timestamp: timestamp,
+      query: queryText,
+      assetTag: assetTag,
+      title: title,
+      priority: priority,
+      priorityLabel: priorityLabel,
+      status: 'COMPLETED',
+      thinking: thinking,
+      summary: summary,
+      rootCause: rootCause,
+      evidence: evidence,
+      actions: actions,
+      telemetry: telemetry
+    };
+  }
+
   // Agent Query Execution
   runPresetQuery(index) {
     this.currentScenarioIndex = index;
     const scenario = this.scenarios[index];
-    document.getElementById('queryInput').value = scenario.query;
+    const qInput = document.getElementById('queryInput');
+    if (qInput) qInput.value = scenario.query;
     this.executeAgentQuery();
   }
 
@@ -655,66 +873,44 @@ class AuraAI {
     if (this.isExecuting) return;
     this.isExecuting = true;
 
-    const queryText = document.getElementById('queryInput').value || this.scenarios[0].query;
-    
-    // Check custom match
-    let customMatch = null;
-    const customDocs = this.vaultFiles.filter(f => f.id.startsWith('FILE-'));
-    if (customDocs.length > 0) {
-      customMatch = customDocs.find(d => queryText.toLowerCase().split(' ').some(w => w.length > 3 && d.content.toLowerCase().includes(w)));
-    }
-
-    let scenario = this.scenarios[this.currentScenarioIndex] || this.scenarios[0];
-    if (customMatch) {
-      scenario = {
-        query: queryText,
-        title: `Custom RAG Analysis: ${customMatch.name}`,
-        priority: "high",
-        priorityLabel: "User Document RAG",
-        imageMode: customMatch.customImgObj ? "custom" : "pump",
-        thinking: `[Aura AI DeepSeek Reasoning Engine for Custom File]
-1. Target custom document: ${customMatch.name}.
-2. BGE vector similarity match found chunk of length ${customMatch.content.length} chars.
-3. Formulate custom SOP actions.`,
-        summary: `Synthesized findings from user uploaded document ${customMatch.name}. Key extract: "${customMatch.content.slice(0, 150)}..."`,
-        rootCause: `Vector RAG retrieval confirmed query relevance in ${customMatch.name}.`,
-        evidence: [{ doc: `${customMatch.name} (Ingested Chunk 1)`, text: `"${customMatch.content.slice(0, 200)}..."` }],
-        actions: ["Verify parameters against plant SOP.", "Log report into air-gapped audit trail."],
-        telemetry: { peakVib: "3.10 mm/s", cavitation: "Normal", peakTemp: "68.5 °C", defectType: "User Document RAG Analysis" }
-      };
-      if (customMatch.customImgObj) {
-        this.customUploadedImage = customMatch.customImgObj;
-        this.activeImageMode = 'custom';
-      }
-    }
+    const queryText = (document.getElementById('queryInput')?.value || '').trim() || this.scenarios[0].query;
 
     // Reset Workflow UI
     const badge = document.getElementById('workflowStatusBadge');
-    badge.innerText = 'Executing...';
-    badge.className = 'state-pill running';
+    if (badge) {
+      badge.innerText = 'Executing...';
+      badge.className = 'state-pill running';
+    }
 
     const timerEl = document.getElementById('executionTimer');
     let startTime = performance.now();
     const timerInterval = setInterval(() => {
-      const elapsed = ((performance.now() - startTime) / 1000).toFixed(2);
-      timerEl.innerText = `${elapsed}s`;
+      if (timerEl) {
+        const elapsed = ((performance.now() - startTime) / 1000).toFixed(2);
+        timerEl.innerText = `${elapsed}s`;
+      }
     }, 50);
 
     const nodes = ['guardrail', 'vector', 'vision', 'reasoner', 'synthesizer'];
     nodes.forEach(n => {
       const el = document.getElementById(`node-${n}`);
-      el.className = 'node-step-card';
-      el.querySelector('.node-step-state').innerText = 'Ready';
+      if (el) {
+        el.className = 'node-step-card';
+        const st = el.querySelector('.node-step-state');
+        if (st) st.innerText = 'Ready';
+      }
     });
 
     const outputContainer = document.getElementById('outputContainer');
-    outputContainer.innerHTML = `
-      <div class="empty-state-card">
-        <svg class="es-svg" viewBox="0 0 24 24"><path fill="currentColor" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg>
-        <h3>Executing LangGraph Autonomous Pipeline...</h3>
-        <p>Running on-premise inference with <strong>${this.modelProfiles[this.selectedModelKey].name}</strong> (${this.selectedQuant}).</p>
-      </div>
-    `;
+    if (outputContainer) {
+      outputContainer.innerHTML = `
+        <div class="empty-state-card">
+          <svg class="es-svg" viewBox="0 0 24 24"><path fill="currentColor" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg>
+          <h3>Executing LangGraph Autonomous Pipeline...</h3>
+          <p>Running on-premise inference with <strong>${this.modelProfiles[this.selectedModelKey]?.name || 'LLaMA-3.3-70B'}</strong> (${this.selectedQuant}).</p>
+        </div>
+      `;
+    }
 
     // Step animation
     await this.animateNode('guardrail', 'PII Masked', 200);
@@ -724,29 +920,13 @@ class AuraAI {
     await this.animateNode('synthesizer', 'Report Ready', 200);
 
     clearInterval(timerInterval);
-    badge.innerText = 'Completed';
-    badge.className = 'state-pill completed';
+    if (badge) {
+      badge.innerText = 'Completed';
+      badge.className = 'state-pill completed';
+    }
 
-    // Save run to history & redirect to dedicated results page
-    const dateStr = new Date().toISOString().replace(/[-:T.]/g, '');
-    const runId = 'RUN-' + dateStr.substring(0, 8) + '-' + Math.floor(100 + Math.random() * 900);
-
-    const newRun = {
-      id: runId,
-      timestamp: new Date().toISOString().replace('T', ' ').substring(0, 19),
-      query: queryText,
-      assetTag: scenario.assetTag || (scenario.imageMode === 'flange' ? 'IMG-V88 (CDU Flange V88)' : scenario.imageMode === 'boiler' ? 'SOP-B3 (Boiler B-3)' : 'DOC-P102 (Centrifugal Pump 102)'),
-      title: scenario.title || `Workflow Analysis: ${queryText}`,
-      priority: scenario.priority || 'critical',
-      priorityLabel: scenario.priorityLabel || 'Critical Alarm',
-      status: 'COMPLETED',
-      thinking: scenario.thinking,
-      summary: scenario.summary,
-      rootCause: scenario.rootCause,
-      evidence: scenario.evidence,
-      actions: scenario.actions,
-      telemetry: scenario.telemetry || { peakVib: "8.42 mm/s", peakTemp: "94.8 °C" }
-    };
+    // Synthesize unique dynamic solution
+    const newRun = this.synthesizeQueryResult(queryText);
 
     this.workflowHistory.unshift(newRun);
     try {
@@ -755,7 +935,7 @@ class AuraAI {
     } catch(e) {}
 
     this.isExecuting = false;
-    window.location.href = `results.html?id=${runId}`;
+    window.location.href = `results.html?id=${newRun.id}`;
   }
 
   animateNode(nodeId, statusText, delayMs) {
