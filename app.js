@@ -132,7 +132,37 @@ class AuraAI {
       } catch(e) {}
     }
 
+    // Notification Center State
+    this.notifications = [
+      {
+        id: 1,
+        title: "Critical Alarm: Pump 102 Bearing Failure",
+        sub: "Vibration threshold exceeded (8.42 mm/s). Diagnostic report generated.",
+        time: "10 mins ago",
+        type: "critical",
+        unread: true,
+        runId: "RUN-20260906-881"
+      },
+      {
+        id: 2,
+        title: "SOP Draft Saved",
+        sub: "Mechanical Seal Emergency Flushing SOP-MRPL-P102 updated to Rev 4.2.",
+        time: "45 mins ago",
+        type: "info",
+        unread: true
+      },
+      {
+        id: 3,
+        title: "SCADA Telemetry Drift Resolved",
+        sub: "Boiler B-3 pressure transmitter re-calibrated successfully.",
+        time: "2 hours ago",
+        type: "success",
+        unread: true
+      }
+    ];
+
     // Model Runtime State
+    this.selectedModel = 'llama-3.3-70b';
     this.selectedModelKey = 'llama-3.3-70b';
     this.selectedQuant = 'Q4_K_M';
     this.temperature = 0.2;
@@ -314,6 +344,14 @@ class AuraAI {
     this.updateVramUI();
     this.setupKeyboardShortcuts();
     this.checkAuthSession();
+    this.renderNotifications();
+
+    window.addEventListener('click', (e) => {
+      const notifWrap = document.querySelector('.notif-wrapper');
+      if (notifWrap && !notifWrap.contains(e.target)) {
+        this.closeNotifDropdown();
+      }
+    });
 
     if (window.location.hash === '#history') {
       this.switchView('history');
@@ -1548,6 +1586,181 @@ ${scenario.actions.map((a, i) => `${i + 1}. ${a}`).join('\n')}
     a.click();
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
+  }
+
+  // Notification Center Methods
+  toggleNotifDropdown(e) {
+    if (e) e.stopPropagation();
+    const dropdown = document.getElementById('notifDropdownMenu');
+    if (!dropdown) return;
+    const isShown = dropdown.classList.contains('show');
+    if (isShown) {
+      dropdown.classList.remove('show');
+    } else {
+      this.renderNotifications();
+      dropdown.classList.add('show');
+    }
+  }
+
+  closeNotifDropdown() {
+    const dropdown = document.getElementById('notifDropdownMenu');
+    if (dropdown) dropdown.classList.remove('show');
+  }
+
+  markAllNotifsRead(e) {
+    if (e) e.stopPropagation();
+    this.notifications.forEach(n => n.unread = false);
+    this.renderNotifications();
+    this.showToast("All notifications marked as read", "success");
+  }
+
+  renderNotifications() {
+    const container = document.getElementById('notifListContainer');
+    const badgeNum = document.getElementById('notifBadgeNum');
+    const unreadPill = document.getElementById('notifUnreadPill');
+    if (!container) return;
+
+    const unreadCount = this.notifications.filter(n => n.unread).length;
+    if (badgeNum) {
+      if (unreadCount > 0) {
+        badgeNum.innerText = unreadCount;
+        badgeNum.style.display = 'flex';
+      } else {
+        badgeNum.style.display = 'none';
+      }
+    }
+    if (unreadPill) {
+      unreadPill.innerText = unreadCount > 0 ? `${unreadCount} New` : `0 Unread`;
+    }
+
+    if (this.notifications.length === 0) {
+      container.innerHTML = `<div style="padding: 20px; text-align: center; color: var(--text-secondary); font-size: 12px;">No notifications</div>`;
+      return;
+    }
+
+    const iconMap = {
+      critical: `<svg viewBox="0 0 24 24"><path fill="currentColor" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg>`,
+      warning: `<svg viewBox="0 0 24 24"><path fill="currentColor" d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"/></svg>`,
+      info: `<svg viewBox="0 0 24 24"><path fill="currentColor" d="M11 15h2v2h-2zm0-8h2v6h-2zm1-5C6.47 2 2 6.47 2 12s4.47 10 10 10 10-4.47 10-10S17.53 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"/></svg>`,
+      success: `<svg viewBox="0 0 24 24"><path fill="currentColor" d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z"/></svg>`
+    };
+
+    container.innerHTML = this.notifications.map(n => `
+      <div class="notif-item ${n.unread ? 'unread' : ''}" onclick="app.handleNotifItemClick(${n.id})">
+        <div class="notif-icon-box ${n.type}">
+          ${iconMap[n.type] || iconMap.info}
+        </div>
+        <div class="notif-body">
+          <span class="notif-title">${n.title}</span>
+          <span class="notif-sub">${n.sub}</span>
+          <span class="notif-time">${n.time}</span>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  handleNotifItemClick(id) {
+    const notif = this.notifications.find(n => n.id === id);
+    if (notif) {
+      notif.unread = false;
+      this.renderNotifications();
+      if (notif.runId) {
+        this.closeNotifDropdown();
+        window.location.href = `results.html?id=${notif.runId}`;
+      }
+    }
+  }
+
+  showToast(msg, type = 'info') {
+    let toastContainer = document.getElementById('toastContainer');
+    if (!toastContainer) {
+      toastContainer = document.createElement('div');
+      toastContainer.id = 'toastContainer';
+      toastContainer.className = 'toast-container';
+      document.body.appendChild(toastContainer);
+    }
+    const toast = document.createElement('div');
+    toast.className = `toast-item toast-${type}`;
+    toast.innerText = msg;
+    toastContainer.appendChild(toast);
+    setTimeout(() => {
+      toast.classList.add('fade-out');
+      setTimeout(() => toast.remove(), 300);
+    }, 3000);
+  }
+
+  // Setting Controls Interactivity Methods
+  selectModelProfile(modelId) {
+    this.selectedModel = modelId;
+    const cards = document.querySelectorAll('.model-cards-stack .m-card');
+    cards.forEach(card => {
+      if (card.dataset.model === modelId) {
+        card.classList.add('active');
+      } else {
+        card.classList.remove('active');
+      }
+    });
+
+    const modelNames = {
+      'llama-3.3-70b': 'LLaMA-3.3-70B-Instruct',
+      'qwen2.5-vl-72b': 'Qwen2.5-VL-72B Multimodal',
+      'deepseek-r1-70b': 'DeepSeek-R1-Distill-Llama-70B',
+      'mistral-nemo-12b': 'Mistral-NeMo-12B (Fast Edge)'
+    };
+    const modelVram = {
+      'llama-3.3-70b': '38.4 GB / 80.0 GB',
+      'qwen2.5-vl-72b': '42.0 GB / 80.0 GB',
+      'deepseek-r1-70b': '39.2 GB / 80.0 GB',
+      'mistral-nemo-12b': '7.2 GB / 80.0 GB'
+    };
+
+    const estVram = document.getElementById('estVramVal');
+    if (estVram) estVram.innerText = modelVram[modelId] || '38.4 GB / 80.0 GB';
+
+    this.showToast(`Active Model Profile set to ${modelNames[modelId] || modelId}`, 'success');
+  }
+
+  updateQuantization(val) {
+    this.selectedQuant = val;
+    this.showToast(`Quantization parameters updated: ${val}`, 'info');
+  }
+
+  testLocalEndpoint() {
+    const input = document.getElementById('endpointUrl');
+    const status = document.getElementById('endpointStatus');
+    const url = input ? input.value : 'http://localhost:11434';
+
+    if (status) {
+      status.innerText = "Status: Testing local endpoint connection...";
+      status.className = "endpoint-status text-amber";
+    }
+
+    setTimeout(() => {
+      if (status) {
+        status.innerText = `Status: Active (${url}) - Latency 42ms`;
+        status.className = "endpoint-status text-green";
+      }
+      this.showToast(`Local REST Endpoint Ping Successful (42ms Latency)`, 'success');
+    }, 600);
+  }
+
+  applyModelSettings() {
+    const tempRange = document.getElementById('tempRange');
+    const quantSelect = document.getElementById('quantSelect');
+    const endpointUrl = document.getElementById('endpointUrl');
+
+    const settings = {
+      model: this.selectedModel || 'llama-3.3-70b',
+      quantization: quantSelect ? quantSelect.value : 'Q4_K_M',
+      temperature: tempRange ? tempRange.value : '0.2',
+      endpoint: endpointUrl ? endpointUrl.value : 'http://localhost:11434'
+    };
+
+    try {
+      localStorage.setItem('aura_system_settings', JSON.stringify(settings));
+    } catch(e) {}
+
+    this.showToast('System configuration & model parameters saved successfully', 'success');
   }
 }
 

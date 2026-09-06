@@ -336,15 +336,28 @@
       </div>
 
       <div class="top-nav-right">
-        <div class="system-health-pill">
-          <span class="pulse-green-dot"></span>
-          <span>System Healthy</span>
-        </div>
+        <div class="notif-wrapper">
+          <button class="notif-btn" id="notifBellBtn" onclick="app.toggleNotifDropdown(event)" title="System Notifications & Alerts">
+            <svg class="notif-svg" viewBox="0 0 24 24"><path fill="currentColor" d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.89 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"/></svg>
+            <span class="notif-num" id="notifBadgeNum">3</span>
+          </button>
 
-        <button class="notif-btn" onclick="app.showNotifAlert()" title="System Alerts">
-          <svg class="notif-svg" viewBox="0 0 24 24"><path fill="currentColor" d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.89 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"/></svg>
-          <span class="notif-num">2</span>
-        </button>
+          <div class="notif-dropdown" id="notifDropdownMenu">
+            <div class="notif-dropdown-hdr">
+              <div class="notif-hdr-left">
+                <strong>System Alerts & Notifications</strong>
+                <span class="notif-count-pill" id="notifUnreadPill">3 New</span>
+              </div>
+              <button class="notif-mark-read-btn" onclick="app.markAllNotifsRead(event)">Mark all as read</button>
+            </div>
+            <div class="notif-list-scroll" id="notifListContainer">
+              <!-- Dynamically populated -->
+            </div>
+            <div class="notif-dropdown-ftr">
+              <a href="#history" onclick="app.switchTab('history'); app.closeNotifDropdown();">View Audit History &rarr;</a>
+            </div>
+          </div>
+        </div>
 
         <div class="user-profile-badge" id="topUserProfileBadge" onclick="app.toggleUserMenu()" title="Logged In User Profile">
           <div class="avatar-circle" id="topNavAvatar">RS</div>
