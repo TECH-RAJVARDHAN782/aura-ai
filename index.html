@@ -226,6 +226,11 @@
         <span>Agent Console</span>
       </button>
 
+      <button class="drawer-menu-item" id="nav-btn-history" onclick="app.switchView('history')">
+        <svg class="m-icon" viewBox="0 0 24 24"><path fill="currentColor" d="M13 3c-4.97 0-9 4.03-9 9H1l3.89 3.89.07.14L9 12H6c0-3.87 3.13-7 7-7s7 3.13 7 7-3.13 7-7 7c-1.93 0-3.68-.79-4.94-2.06l-1.42 1.42C8.27 19.99 10.51 21 13 21c4.97 0 9-4.03 9-9s-4.03-9-9-9zm-1 5v5l4.25 2.52.77-1.28-3.52-2.09V8z"/></svg>
+        <span>Workflow History</span>
+      </button>
+
       <button class="drawer-menu-item" id="nav-btn-inspector" onclick="app.switchView('inspector')">
         <svg class="m-icon" viewBox="0 0 24 24"><path fill="currentColor" d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-2 10h-4v4h-2v-4H7v-2h4V7h2v4h4v2z"/></svg>
         <span>Visual & SCADA</span>
@@ -900,6 +905,44 @@
                 <button class="btn btn-cyan" onclick="app.applyModelSettings()">Save Configuration</button>
               </div>
             </div>
+          </div>
+        </div>
+      <!-- VIEW 9: WORKFLOW HISTORY -->
+      <section class="view-panel" id="view-history">
+        <div class="history-panel-wrapper">
+          <div class="v-top-bar">
+            <div>
+              <h2>Workflow Execution History</h2>
+              <p>Audit trail of all previous multi-agent diagnostic runs and SCADA correlation workflows.</p>
+            </div>
+            <div class="v-search-box">
+              <input type="text" id="historySearchInput" placeholder="Search by asset tag, query, or run ID..." oninput="app.renderHistoryView()">
+            </div>
+          </div>
+
+          <div class="v-filter-bar">
+            <button class="vf-btn active" id="histFilterAll" onclick="app.setHistoryFilter('all')">All Runs</button>
+            <button class="vf-btn" id="histFilterCompleted" onclick="app.setHistoryFilter('completed')">Completed</button>
+            <button class="vf-btn" id="histFilterCritical" onclick="app.setHistoryFilter('critical')">Critical Alarms</button>
+          </div>
+
+          <div class="logs-table-card">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Run ID</th>
+                  <th>Timestamp</th>
+                  <th>Submitted Query</th>
+                  <th>Target Asset Tag</th>
+                  <th>Priority</th>
+                  <th>Status</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody id="historyTableBody">
+                <!-- Dynamically populated -->
+              </tbody>
+            </table>
           </div>
         </div>
       </section>

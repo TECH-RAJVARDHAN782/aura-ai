@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Aura AI — Workflow Execution Results</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body class="light-theme">
+
+  <!-- FLOATING LEFT EDGE DRAWER TRIGGER TAB -->
+  <div class="drawer-trigger" id="drawerTrigger" onmouseenter="resultsApp.openDrawer()" onclick="resultsApp.openDrawer()" title="Open Navigation Drawer">
+    <div class="trigger-chevrons">
+      <svg class="chevron-icon" viewBox="0 0 24 24"><path fill="currentColor" d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg>
+      <svg class="chevron-icon" viewBox="0 0 24 24"><path fill="currentColor" d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg>
+      <svg class="chevron-icon" viewBox="0 0 24 24"><path fill="currentColor" d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg>
+    </div>
+    <span class="trigger-label">MENU</span>
+  </div>
+
+  <!-- SLIDE-OUT NAVIGATION SIDE DRAWER -->
+  <aside class="side-drawer" id="sideDrawer" onmouseleave="resultsApp.handleDrawerMouseLeave()">
+    <div class="drawer-brand-hdr">
+      <div class="brand-title">
+        <svg class="brand-logo-icon" viewBox="0 0 24 24"><path fill="currentColor" d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+        <div class="brand-text-group">
+          <span class="brand-name">AURA AI</span>
+          <span class="brand-sub">Sovereign Intelligence</span>
+        </div>
+      </div>
+      <button class="pin-toggle-btn" id="pinToggleBtn" onclick="resultsApp.togglePin()" title="Lock/Unlock Sidebar Open">
+        <svg class="pin-icon" viewBox="0 0 24 24"><path fill="currentColor" d="M16 9V4l1 0V2H7v2l1 0v5L6 11v2h5v7l1 1 1-1v-7h5v-2l-2-2z"/></svg>
+      </button>
+    </div>
+
+    <div class="drawer-menu-scroll">
+      <div class="menu-section-label">Navigation</div>
+      
+      <a href="index.html" class="drawer-menu-item">
+        <svg class="m-icon" viewBox="0 0 24 24"><path fill="currentColor" d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm-5 14H4v-4h11v4zm0-5H4V9h11v4zm5 5h-4V9h4v9z"/></svg>
+        <span>Agent Console</span>
+      </a>
+
+      <a href="index.html#history" class="drawer-menu-item active">
+        <svg class="m-icon" viewBox="0 0 24 24"><path fill="currentColor" d="M13 3c-4.97 0-9 4.03-9 9H1l3.89 3.89.07.14L9 12H6c0-3.87 3.13-7 7-7s7 3.13 7 7-3.13 7-7 7c-1.93 0-3.68-.79-4.94-2.06l-1.42 1.42C8.27 19.99 10.51 21 13 21c4.97 0 9-4.03 9-9s-4.03-9-9-9zm-1 5v5l4.25 2.52.77-1.28-3.52-2.09V8z"/></svg>
+        <span>Workflow History</span>
+      </a>
+
+      <a href="index.html#inspector" class="drawer-menu-item">
+        <svg class="m-icon" viewBox="0 0 24 24"><path fill="currentColor" d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-2 10h-4v4h-2v-4H7v-2h4V7h2v4h4v2z"/></svg>
+        <span>Visual & SCADA</span>
+      </a>
+    </div>
+
+    <div class="drawer-footer-block">
+      <a href="index.html" class="drawer-logout-btn">
+        <svg class="logout-svg" viewBox="0 0 24 24"><path fill="currentColor" d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg>
+        <span>Back to Console</span>
+      </a>
+    </div>
+  </aside>
+
+  <!-- MAIN CANVAS & CONTENT LAYOUT -->
+  <div class="app-canvas">
+    
+    <!-- TOP UTILITY BAR -->
+    <header class="top-utility-nav">
+      <div class="top-nav-left">
+        <a href="index.html" class="btn btn-sm btn-outline">
+          <svg class="b-icon" viewBox="0 0 24 24"><path fill="currentColor" d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg>
+          <span>Back to Console</span>
+        </a>
+        <div class="results-page-title">
+          <strong>Workflow Execution Report</strong>
+          <span id="runIdBreadcrumb">RUN-20260906-882</span>
+        </div>
+      </div>
+
+      <div class="top-nav-right">
+        <div class="system-health-pill">
+          <span class="pulse-green-dot"></span>
+          <span>100% Air-Gapped Session</span>
+        </div>
+        <div class="user-profile-badge">
+          <div class="avatar-circle" id="topNavAvatar">RS</div>
+          <div class="user-txt">
+            <span class="u-name" id="topNavUserName">Rajvardhan Shinde</span>
+            <span class="u-dept" id="topNavUserDept">Plant Systems Engineer</span>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- MAIN VIEWPORT CONTENT -->
+    <main class="main-viewport-content">
+      <div class="console-flow-wrapper" id="resultsMainContainer">
+
+        <!-- RUN METADATA HEADER CARD -->
+        <div class="dash-card">
+          <div class="article-hdr">
+            <div>
+              <div class="results-meta-tags">
+                <span class="p-badge p-critical" id="resPriorityBadge">CRITICAL ALARM</span>
+                <span class="tag-badge bg-green" id="resStatusBadge">COMPLETED</span>
+                <span class="sop-tag" id="resRunIdTag">RUN-20260906-882</span>
+              </div>
+              <h2 id="resTitle" style="margin-top: 8px;">Root Cause Analysis Report</h2>
+            </div>
+            <div class="results-action-buttons">
+              <button class="btn btn-sm btn-outline" onclick="resultsApp.exportMarkdown()">
+                <svg class="b-icon" viewBox="0 0 24 24"><path fill="currentColor" d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
+                <span>Export Report (MD)</span>
+              </button>
+              <button class="btn btn-sm btn-cyan" onclick="resultsApp.exportJSON()">
+                <svg class="b-icon" viewBox="0 0 24 24"><path fill="currentColor" d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg>
+                <span>Export Audit JSON</span>
+              </button>
+            </div>
+          </div>
+
+          <div class="vision-parameters-grid">
+            <div class="v-param-item">
+              <span class="p-lbl">Submitted Query</span>
+              <span class="p-val" id="resQueryTxt">What is causing repeated failure on Pump 102?</span>
+            </div>
+            <div class="v-param-item">
+              <span class="p-lbl">Target Asset Tag</span>
+              <span class="p-val text-cyan" id="resAssetTag">DOC-P102 (Centrifugal Pump 102)</span>
+            </div>
+            <div class="v-param-item">
+              <span class="p-lbl">Execution Timestamp</span>
+              <span class="p-val" id="resTimestamp">2026-09-06 15:08:00</span>
+            </div>
+            <div class="v-param-item">
+              <span class="p-lbl">Peak Telemetry Telemetry</span>
+              <span class="p-val text-red" id="resTelemetryPeak">8.42 mm/s (94.8 °C)</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- LANGGRAPH MULTI-AGENT EXECUTION TRACK CARD -->
+        <div class="pipeline-progress-card">
+          <div class="pipe-card-hdr">
+            <div class="p-hdr-left">
+              <svg class="p-spark-icon" viewBox="0 0 24 24"><path fill="currentColor" d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+              <h3>LangGraph Multi-Agent Execution Track</h3>
+            </div>
+            <span class="state-pill completed">Pipeline Execution Complete (1.24s)</span>
+          </div>
+
+          <div class="nodes-horizontal-track">
+            <div class="node-step-card done">
+              <div class="node-step-hdr">
+                <svg class="step-svg" viewBox="0 0 24 24"><path fill="currentColor" d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4z"/></svg>
+                <span>Security Policy</span>
+              </div>
+              <span class="node-step-state">PASS (0.08s)</span>
+            </div>
+
+            <div class="track-line"></div>
+
+            <div class="node-step-card done">
+              <div class="node-step-hdr">
+                <svg class="step-svg" viewBox="0 0 24 24"><path fill="currentColor" d="M12 3C7.58 3 4 4.79 4 7v10c0 2.21 3.58 4 8 4s8-1.79 8-4V7c0-2.21-3.58-4-8-4z"/></svg>
+                <span>Vector RAG</span>
+              </div>
+              <span class="node-step-state">COSINE 0.942</span>
+            </div>
+
+            <div class="track-line"></div>
+
+            <div class="node-step-card done">
+              <div class="node-step-hdr">
+                <svg class="step-svg" viewBox="0 0 24 24"><path fill="currentColor" d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z"/></svg>
+                <span>Vision Scan</span>
+              </div>
+              <span class="node-step-state">HOTSPOT 94.8°C</span>
+            </div>
+
+            <div class="track-line"></div>
+
+            <div class="node-step-card done">
+              <div class="node-step-hdr">
+                <svg class="step-svg" viewBox="0 0 24 24"><path fill="currentColor" d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2z"/></svg>
+                <span>Reasoning Engine</span>
+              </div>
+              <span class="node-step-state">R1 COT VERIFIED</span>
+            </div>
+
+            <div class="track-line"></div>
+
+            <div class="node-step-card done">
+              <div class="node-step-hdr">
+                <svg class="step-svg" viewBox="0 0 24 24"><path fill="currentColor" d="M15 9H9v6h6V9z"/></svg>
+                <span>SOP Builder</span>
+              </div>
+              <span class="node-step-state">REPORT READY</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- DEEPSEEK-R1 REASONING LOG TERMINAL (LIGHT THEME CODE BLOCK) -->
+        <div class="cot-box">
+          <div class="cot-title" onclick="resultsApp.toggleCoT()">
+            <span>DEEPSEEK-R1 CHAIN-OF-THOUGHT REASONING LOGS</span>
+            <span id="cotArrow">▲ [COLLAPSE]</span>
+          </div>
+          <pre class="cot-content" id="resCoTText">[Aura AI DeepSeek Reasoning Engine]
+1. Target asset: Centrifugal Pump 102 (Tag: DOC-P102).
+2. Correlate vector embeddings: Matched DOC-P102-MAINT-2026.pdf & LOG-CDU-QUARTERLY-2026.csv (Cosine 0.942).
+3. Telemetry anomaly: 142 Hz harmonic spike with peak vibration at 8.42 mm/s (ISO 10816 safe limit: 4.50 mm/s).
+4. Vision model (Qwen-VL) thermal scan: Thermal hotspot detected on primary drive bearing (94.8 deg C).
+5. Conclusion: NPSHa drop causing impeller cavitation and axial shaft friction wear.</pre>
+        </div>
+
+        <!-- ROOT CAUSE & DIAGNOSTIC DETAILS -->
+        <div class="dash-card">
+          <div class="section-card">
+            <h4>Diagnostic Summary</h4>
+            <p id="resSummaryTxt">Pump 102 has suffered 3 unscheduled trips over 90 days. Multi-agent diagnostic reasoning identifies Mechanical Seal Thermal Failure & Severe Bearing Friction (Peak 94.8 deg C) triggered by Suction Line Cavitation.</p>
+          </div>
+
+          <div class="section-card">
+            <h4>Root Cause Analysis</h4>
+            <p id="resRootCauseTxt">Vibration telemetry reveals a high-frequency harmonic at 142 Hz (Peak 8.42 mm/s) matching suction recirculation. The axial shaft deflection generated friction heat up to 94.8 deg C, vaporizing graphite seal faces.</p>
+          </div>
+
+          <div class="section-card">
+            <h4>Citational Evidence References</h4>
+            <div class="evidence-grid" id="resEvidenceGrid">
+              <div class="ev-card">
+                <span class="ev-doc">DOC-P102-MAINT-2026.pdf (Page 4)</span>
+                <span class="ev-txt">'Vibration harmonic at 142Hz indicates NPSHa dropping below NPSHr during high thermal load.'</span>
+              </div>
+              <div class="ev-card">
+                <span class="ev-doc">LOG-CDU-QUARTERLY-2026.csv</span>
+                <span class="ev-txt">'Pump 102 bearing thermal trip logged at 94.8 deg C on Aug 28, 2026.'</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="section-card">
+            <h4>Recommended Corrective Action Plan</h4>
+            <ul class="action-list" id="resActionsList">
+              <li>Inspect suction strainer for 45% partial blockage causing NPSHa drop.</li>
+              <li>Replace mechanical seal cartridge with SiC-on-SiC thermal face replacement.</li>
+              <li>Recalibrate baseline vibration sensor tags in SCADA system.</li>
+            </ul>
+          </div>
+        </div>
+
+      </div>
+    </main>
+  </div>
+
+  <script src="results.js"></script>
+</body>
+</html>

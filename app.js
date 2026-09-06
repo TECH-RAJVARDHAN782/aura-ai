@@ -34,6 +34,104 @@ class AuraAI {
       console.warn("Could not load auth session from local storage", e);
     }
 
+    // Workflow History State
+    this.historyFilter = 'all';
+    this.workflowHistory = [];
+    try {
+      const storedHist = localStorage.getItem('aura_workflow_history');
+      if (storedHist) {
+        this.workflowHistory = JSON.parse(storedHist);
+      }
+    } catch(e) {
+      console.warn("Could not load workflow history from localStorage", e);
+    }
+
+    if (!this.workflowHistory || this.workflowHistory.length === 0) {
+      this.workflowHistory = [
+        {
+          id: 'RUN-20260906-881',
+          timestamp: '2026-09-06 14:32:10',
+          query: 'What is causing repeated failure on Pump 102?',
+          assetTag: 'DOC-P102 (Centrifugal Pump 102)',
+          title: 'Root Cause Analysis: Centrifugal Pump 102 Mechanical Seal Fail',
+          priority: 'critical',
+          priorityLabel: 'Critical Alarm',
+          status: 'COMPLETED',
+          thinking: `[Aura AI DeepSeek Reasoning Engine]
+1. Target asset: Centrifugal Pump 102 (Tag: DOC-P102).
+2. Correlate vector embeddings: Matched DOC-P102-MAINT-2026.pdf & LOG-CDU-QUARTERLY-2026.csv (Cosine 0.942).
+3. Telemetry anomaly: 142 Hz harmonic spike with peak vibration at 8.42 mm/s (ISO 10816 safe limit: 4.50 mm/s).
+4. Vision model (Qwen-VL) thermal scan: Thermal hotspot detected on primary drive bearing (94.8 deg C).
+5. Conclusion: NPSHa drop causing impeller cavitation and axial shaft friction wear.`,
+          summary: "Pump 102 has suffered 3 unscheduled trips over 90 days. Multi-agent diagnostic reasoning identifies Mechanical Seal Thermal Failure & Severe Bearing Friction (Peak 94.8 deg C) triggered by Suction Line Cavitation.",
+          rootCause: "Vibration telemetry reveals a high-frequency harmonic at 142 Hz (Peak 8.42 mm/s) matching suction recirculation. The axial shaft deflection generated friction heat up to 94.8 deg C, vaporizing graphite seal faces.",
+          evidence: [
+            { doc: "DOC-P102-MAINT-2026.pdf (Page 4)", text: "'Vibration harmonic at 142Hz indicates NPSHa dropping below NPSHr during high thermal load.'" },
+            { doc: "LOG-CDU-QUARTERLY-2026.csv", text: "'Pump 102 bearing thermal trip logged at 94.8 deg C on Aug 28, 2026.'" }
+          ],
+          actions: [
+            "Inspect suction strainer for 45% partial blockage causing NPSHa drop.",
+            "Replace mechanical seal cartridge with SiC-on-SiC thermal face replacement.",
+            "Recalibrate baseline vibration sensor tags in SCADA system."
+          ],
+          telemetry: { peakVib: "8.42 mm/s", peakTemp: "94.8 °C" }
+        },
+        {
+          id: 'RUN-20260905-412',
+          timestamp: '2026-09-05 11:15:40',
+          query: 'Diagnose thermal anomaly on CDU Pipe Flange V88',
+          assetTag: 'IMG-V88 (CDU Flange V88)',
+          title: 'Thermal Anomaly Diagnostic: Pipe Flange V88 Gasket Leak',
+          priority: 'warning',
+          priorityLabel: 'Thermal Anomaly',
+          status: 'COMPLETED',
+          thinking: `[Aura AI DeepSeek Reasoning Engine]
+1. Target asset: CDU Pipe Flange V88 (Tag: IMG-V88).
+2. Thermal Matrix analysis: Hotspot detected at top bolt 4 position (+83.5 deg C delta).
+3. Vector RAG match: SOP-MRPL-B3-PRESSURE.pdf & LOG-CDU-QUARTERLY-2026.csv.
+4. Conclusion: Gasket compression relaxation under thermal cycle load causing micro-seep.`,
+          summary: "Thermal camera scan shows localized heat plume (+83.5 deg C delta above ambient) at top bolt 4 position on CDU Pipe Flange V88.",
+          rootCause: "Thermal fatigue cycle relaxed bolt pre-torque by 18%, allowing high-temperature crude vapors to escape past spiral-wound gasket.",
+          evidence: [
+            { doc: "IMG-V88-FLANGE-THERMAL.png", text: "'Hotspot localized to bolt positions 3-4 with peak temp 148.5 deg C.'" }
+          ],
+          actions: [
+            "Apply hot-bolting re-torque protocol to 120 Nm.",
+            "Schedule flange gasket replacement during next maintenance window."
+          ],
+          telemetry: { peakVib: "2.10 mm/s", peakTemp: "148.5 °C" }
+        },
+        {
+          id: 'RUN-20260904-109',
+          timestamp: '2026-09-04 09:40:22',
+          query: 'Evaluate Boiler B-3 steam pressure drop',
+          assetTag: 'SOP-B3 (Boiler B-3)',
+          title: 'Combustion Mismatch Analysis: Boiler B-3 Pressure Drop',
+          priority: 'warning',
+          priorityLabel: 'Pressure Drop',
+          status: 'COMPLETED',
+          thinking: `[Aura AI DeepSeek Reasoning Engine]
+1. Target asset: Boiler B-3 (Tag: SOP-B3).
+2. Flame temp: 810 deg C (below 850 deg C threshold).
+3. Pressure drop: 42 Bar down to 34.4 Bar over 45 minutes.
+4. Conclusion: Air damper servo position miscalibrated by +12%.`,
+          summary: "Boiler B-3 steam discharge pressure dropped from 42 Bar to 34.4 Bar. Air-to-fuel ratio damper mismatch reduced furnace flame temperature.",
+          rootCause: "Damper actuator feedback sensor calibration drifted, causing oxygen excess in burner chamber and lowering thermal output.",
+          evidence: [
+            { doc: "SOP-MRPL-B3-PRESSURE.pdf", text: "'Flame temp below 850 deg C indicates air damper mismatch.'" }
+          ],
+          actions: [
+            "Recalibrate damper actuator servo feedback loop.",
+            "Verify fuel supply valve pressure regulator."
+          ],
+          telemetry: { peakVib: "1.80 mm/s", peakTemp: "810 °C" }
+        }
+      ];
+      try {
+        localStorage.setItem('aura_workflow_history', JSON.stringify(this.workflowHistory));
+      } catch(e) {}
+    }
+
     // Model Runtime State
     this.selectedModelKey = 'llama-3.3-70b';
     this.selectedQuant = 'Q4_K_M';
@@ -216,6 +314,10 @@ class AuraAI {
     this.updateVramUI();
     this.setupKeyboardShortcuts();
     this.checkAuthSession();
+
+    if (window.location.hash === '#history') {
+      this.switchView('history');
+    }
     console.log("Aura AI Cybernetic Engine Initialized.");
   }
 
@@ -262,7 +364,7 @@ class AuraAI {
     });
   }
 
-  // 8-View Dynamic Navigation Switcher
+  // 9-View Dynamic Navigation Switcher
   switchView(viewName) {
     this.activeView = viewName;
     
@@ -289,6 +391,9 @@ class AuraAI {
     }
     if (viewName === 'analytics') {
       this.renderAnalyticsChart();
+    }
+    if (viewName === 'history') {
+      this.renderHistoryView();
     }
   }
 
@@ -574,25 +679,44 @@ class AuraAI {
     `;
 
     // Step animation
-    await this.animateNode('guardrail', 'PII Masked', 250);
-    await this.animateNode('vector', '14,250 Chunks', 350);
-    await this.animateNode('vision', 'Qwen-VL Done', 400);
-    await this.animateNode('reasoner', 'Reasoning', 500);
-    await this.animateNode('synthesizer', 'Report Ready', 250);
+    await this.animateNode('guardrail', 'PII Masked', 200);
+    await this.animateNode('vector', '14,250 Chunks', 250);
+    await this.animateNode('vision', 'Qwen-VL Done', 250);
+    await this.animateNode('reasoner', 'Reasoning', 300);
+    await this.animateNode('synthesizer', 'Report Ready', 200);
 
     clearInterval(timerInterval);
     badge.innerText = 'Completed';
     badge.className = 'state-pill completed';
 
-    this.activeImageMode = scenario.imageMode;
-    document.getElementById('valDefectType').innerText = scenario.telemetry.defectType;
-    document.getElementById('valPeakTemp').innerText = scenario.telemetry.peakTemp;
-    document.getElementById('statPeakVib').innerText = scenario.telemetry.peakVib;
+    // Save run to history & redirect to dedicated results page
+    const dateStr = new Date().toISOString().replace(/[-:T.]/g, '');
+    const runId = 'RUN-' + dateStr.substring(0, 8) + '-' + Math.floor(100 + Math.random() * 900);
 
-    this.renderVisualInspector();
-    this.renderTelemetryChart();
-    this.renderResponseArticle(scenario);
+    const newRun = {
+      id: runId,
+      timestamp: new Date().toISOString().replace('T', ' ').substring(0, 19),
+      query: queryText,
+      assetTag: scenario.assetTag || (scenario.imageMode === 'flange' ? 'IMG-V88 (CDU Flange V88)' : scenario.imageMode === 'boiler' ? 'SOP-B3 (Boiler B-3)' : 'DOC-P102 (Centrifugal Pump 102)'),
+      title: scenario.title || `Workflow Analysis: ${queryText}`,
+      priority: scenario.priority || 'critical',
+      priorityLabel: scenario.priorityLabel || 'Critical Alarm',
+      status: 'COMPLETED',
+      thinking: scenario.thinking,
+      summary: scenario.summary,
+      rootCause: scenario.rootCause,
+      evidence: scenario.evidence,
+      actions: scenario.actions,
+      telemetry: scenario.telemetry || { peakVib: "8.42 mm/s", peakTemp: "94.8 °C" }
+    };
+
+    this.workflowHistory.unshift(newRun);
+    try {
+      localStorage.setItem('aura_workflow_history', JSON.stringify(this.workflowHistory));
+    } catch(e) {}
+
     this.isExecuting = false;
+    window.location.href = `results.html?id=${runId}`;
   }
 
   animateNode(nodeId, statusText, delayMs) {
@@ -1353,6 +1477,65 @@ ${scenario.actions.map((a, i) => `${i + 1}. ${a}`).join('\n')}
     this.switchAuthTab('login');
     this.showAuthAlert("Session locked. Re-authenticate to access workbench.", "success");
     this.triggerToast("Session Locked", "You have been logged out of the Sovereign Workbench.");
+  }
+
+  // ==========================================================================
+  // WORKFLOW HISTORY VIEW & LOCALSTORAGE MANAGEMENT
+  // ==========================================================================
+
+  setHistoryFilter(filter) {
+    this.historyFilter = filter;
+    document.querySelectorAll('.v-filter-bar .vf-btn').forEach(btn => {
+      const filterName = btn.id.replace('histFilter', '').toLowerCase();
+      btn.classList.toggle('active', filterName === filter);
+    });
+    this.renderHistoryView();
+  }
+
+  renderHistoryView() {
+    const tbody = document.getElementById('historyTableBody');
+    if (!tbody) return;
+
+    const searchTerm = (document.getElementById('historySearchInput')?.value || '').toLowerCase();
+    tbody.innerHTML = '';
+
+    const filtered = (this.workflowHistory || []).filter(r => {
+      const matchFilter = this.historyFilter === 'all' ||
+        (this.historyFilter === 'completed' && r.status === 'COMPLETED') ||
+        (this.historyFilter === 'critical' && (r.priority === 'critical' || (r.priorityLabel || '').toLowerCase().includes('critical')));
+      const matchSearch = (r.id || '').toLowerCase().includes(searchTerm) ||
+        (r.query || '').toLowerCase().includes(searchTerm) ||
+        (r.assetTag || '').toLowerCase().includes(searchTerm);
+      return matchFilter && matchSearch;
+    });
+
+    if (filtered.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; padding: 24px; color: var(--text-secondary);">No workflow execution history records found matching filter.</td></tr>`;
+      return;
+    }
+
+    filtered.forEach(run => {
+      const tr = document.createElement('tr');
+      tr.style.cursor = 'pointer';
+      tr.onclick = () => { window.location.href = `results.html?id=${run.id}`; };
+
+      const prioClass = run.priority === 'critical' ? 'bg-red' : run.priority === 'warning' ? 'bg-amber' : 'bg-green';
+
+      tr.innerHTML = `
+        <td><strong class="text-cyan">${run.id}</strong></td>
+        <td><span style="font-family: var(--font-mono); font-size: 11px; color: var(--text-secondary);">${run.timestamp}</span></td>
+        <td><strong style="color: var(--text-primary);">${run.query}</strong></td>
+        <td><span class="sop-tag">${run.assetTag || 'DOC-P102'}</span></td>
+        <td><span class="tag-badge ${prioClass}">${run.priorityLabel || run.priority}</span></td>
+        <td><span class="tag-badge bg-green">${run.status}</span></td>
+        <td>
+          <a href="results.html?id=${run.id}" class="btn btn-sm btn-outline" onclick="event.stopPropagation();">
+            <span>View Report ➔</span>
+          </a>
+        </td>
+      `;
+      tbody.appendChild(tr);
+    });
   }
 
   downloadFile(filename, content, type) {
