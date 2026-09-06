@@ -1,10 +1,11 @@
 /* ==========================================================================
-   Aura AI — Sovereign Industrial Intelligence Application Logic
+   Aura AI — Sovereign Industrial Intelligence Core Application Engine
+   Architecture: 7 Dynamic Views, Zero Emojis, Real-time RAG & Telemetry
    ========================================================================== */
 
 class AuraAI {
   constructor() {
-    this.activeTab = 'console'; // 'console', 'inspector', 'vault'
+    this.activeView = 'console'; // 'console', 'inspector', 'vault', 'security', 'sop', 'telemetry', 'settings'
     this.currentScenarioIndex = 0;
     this.isExecuting = false;
     this.activeVaultFilter = 'all';
@@ -12,7 +13,7 @@ class AuraAI {
     this.customUploadedImage = null;
     this.telemetryTimeframe = '7d';
 
-    // Model Runtime State
+    // Model Runtime Config
     this.selectedModelKey = 'llama-3.3-70b';
     this.selectedQuant = 'Q4_K_M';
     this.temperature = 0.2;
@@ -20,7 +21,7 @@ class AuraAI {
     this.endpointUrl = 'http://localhost:11434/api/generate';
     this.isLocalEndpointActive = false;
 
-    // SCADA Live Ticker State
+    // SCADA Sensor Stream State
     this.isLiveSCADA = false;
     this.scadaTimer = null;
     this.liveTelemetryData = [2.4, 2.8, 3.1, 3.5, 4.2, 5.8, 8.42, 6.1, 3.9];
@@ -28,7 +29,7 @@ class AuraAI {
     // RBAC Persona State
     this.currentRBAC = 'engineer'; // 'engineer', 'auditor', 'admin'
 
-    // Open-Weight Models
+    // Open-Weight Model Profiles
     this.modelProfiles = {
       'llama-3.3-70b': { name: 'Llama-3.3-70B', sizeB: 70, vramBaseQ4: 38.4, speedTps: 42.5 },
       'qwen2.5-vl-72b': { name: 'Qwen2.5-VL-72B', sizeB: 72, vramBaseQ4: 42.0, speedTps: 38.2 },
@@ -36,7 +37,7 @@ class AuraAI {
       'mistral-nemo-12b': { name: 'Mistral-NeMo-12B', sizeB: 12, vramBaseQ4: 7.2, speedTps: 110.0 }
     };
 
-    // Confidential Vault Items
+    // Confidential Vault Items (Emoji-Free)
     this.vaultFiles = [
       {
         id: 'DOC-P102',
@@ -44,9 +45,8 @@ class AuraAI {
         type: 'docs',
         size: '4.8 MB',
         date: '2026-08-29',
-        icon: '📄',
         desc: 'MRPL Centrifugal Pump 102 Mechanical Seal Maintenance Log',
-        content: 'Pump 102 Mechanical Seal Log: Vibration harmonic at 142Hz indicates NPSHa dropping below NPSHr. Bearing thermal trip logged at 94.8°C. Vibration peak 8.42 mm/s exceeds ISO 10816 limit.'
+        content: 'Pump 102 Mechanical Seal Log: Vibration harmonic at 142Hz indicates NPSHa dropping below NPSHr. Bearing thermal trip logged at 94.8 deg C. Vibration peak 8.42 mm/s exceeds ISO 10816 limit.'
       },
       {
         id: 'SOP-B3',
@@ -54,9 +54,8 @@ class AuraAI {
         type: 'docs',
         size: '12.4 MB',
         date: '2026-07-15',
-        icon: '📄',
         desc: 'Boiler B-3 Operating SOP & Valve Protocols',
-        content: 'Boiler B-3 SOP: Flame temp below 850°C indicates air damper mismatch. Steam discharge dropped from 42 Bar to 34.4 Bar over 45 minutes.'
+        content: 'Boiler B-3 SOP: Flame temp below 850 deg C indicates air damper mismatch. Steam discharge dropped from 42 Bar to 34.4 Bar over 45 minutes.'
       },
       {
         id: 'IMG-V88',
@@ -64,9 +63,8 @@ class AuraAI {
         type: 'images',
         size: '18.2 MB',
         date: '2026-09-02',
-        icon: '📷',
         desc: 'CDU Unit Pipe Flange Thermal Scan',
-        content: 'Thermal matrix analysis: Thermal anomaly detected at top bolt 4 position. Temperature delta +83.5°C above ambient. Peak temp: 148.5°C.'
+        content: 'Thermal matrix analysis: Thermal anomaly detected at top bolt 4 position. Temperature delta +83.5 deg C above ambient. Peak temp: 148.5 deg C.'
       },
       {
         id: 'LOG-CDU',
@@ -74,13 +72,12 @@ class AuraAI {
         type: 'docs',
         size: '2.1 MB',
         date: '2026-09-01',
-        icon: '📊',
         desc: 'Refinery CDU Unit Telemetry & Vibration Logs',
         content: 'Processed 1.2M telemetry data points across 48 local machinery tags. MTBF target of 8,000 hrs achieved for 85% of machinery.'
       }
     ];
 
-    // Pre-loaded Agentic Scenarios
+    // Pre-loaded Agentic Failure Scenarios (Emoji-Free)
     this.scenarios = [
       {
         query: "What is causing repeated failure on Pump 102?",
@@ -92,13 +89,13 @@ class AuraAI {
 1. Target asset: Centrifugal Pump 102 (Tag: DOC-P102).
 2. Correlate vector embeddings: Matched DOC-P102-MAINT-2026.pdf & LOG-CDU-QUARTERLY-2026.csv (Cosine 0.942).
 3. Telemetry anomaly: 142 Hz harmonic spike with peak vibration at 8.42 mm/s (ISO 10816 safe limit: 4.50 mm/s).
-4. Vision model (Qwen-VL) thermal scan: Thermal hotspot detected on primary drive bearing (94.8°C).
+4. Vision model (Qwen-VL) thermal scan: Thermal hotspot detected on primary drive bearing (94.8 deg C).
 5. Conclusion: NPSHa drop causing impeller cavitation and axial shaft friction wear.`,
-        summary: "Pump 102 has suffered 3 unscheduled trips over 90 days. Multi-agent diagnostic reasoning identifies **Mechanical Seal Thermal Failure & Severe Bearing Friction (Peak 94.8°C)** triggered by **Suction Line Cavitation**.",
-        rootCause: "Vibration telemetry reveals a high-frequency harmonic at **142 Hz (Peak 8.42 mm/s)** matching suction recirculation. The axial shaft deflection generated friction heat up to 94.8°C, vaporizing graphite seal faces.",
+        summary: "Pump 102 has suffered 3 unscheduled trips over 90 days. Multi-agent diagnostic reasoning identifies Mechanical Seal Thermal Failure & Severe Bearing Friction (Peak 94.8 deg C) triggered by Suction Line Cavitation.",
+        rootCause: "Vibration telemetry reveals a high-frequency harmonic at 142 Hz (Peak 8.42 mm/s) matching suction recirculation. The axial shaft deflection generated friction heat up to 94.8 deg C, vaporizing graphite seal faces.",
         evidence: [
           { doc: "DOC-P102-MAINT-2026.pdf (Page 4)", text: "'Vibration harmonic at 142Hz indicates NPSHa dropping below NPSHr during high thermal load.'" },
-          { doc: "LOG-CDU-QUARTERLY-2026.csv", text: "'Pump 102 bearing thermal trip logged at 94.8°C on Aug 28, 2026.'" },
+          { doc: "LOG-CDU-QUARTERLY-2026.csv", text: "'Pump 102 bearing thermal trip logged at 94.8 deg C on Aug 28, 2026.'" },
           { doc: "Qwen-VL Vision Hotspot Scan", text: "'Primary drive bearing friction coefficient exceeds safety rating by +45%.'" }
         ],
         actions: [
@@ -117,13 +114,13 @@ class AuraAI {
         thinking: `[Aura AI DeepSeek Reasoning Engine]
 1. Target optical asset: IMG-V88-FLANGE-THERMAL.png.
 2. Qwen2.5-VL bounding box detection: Localized plume at top bolt 4 position.
-3. Thermal conversion matrix: Surface heat peak = 148.5°C (Normal rating: 65°C).
+3. Thermal conversion matrix: Surface heat peak = 148.5 deg C (Normal rating: 65 deg C).
 4. SOP Manual lookup (SOP-MRPL-B3-PRESSURE.pdf Page 18): Re-torque required immediately.`,
-        summary: "Qwen2.5-VL multimodal analysis of thermal file **IMG-V88-FLANGE-THERMAL.png** identifies **Thermal Insulation Degradation & Steam Micro-Fissure** at top bolt 4 position.",
-        rootCause: "Heat leakage zone reaching **148.5°C** (Normal pipe surface limit: 65°C) caused by gasket compression loss under thermal expansion cycles.",
+        summary: "Qwen2.5-VL multimodal analysis of thermal file IMG-V88-FLANGE-THERMAL.png identifies Thermal Insulation Degradation & Steam Micro-Fissure at top bolt 4 position.",
+        rootCause: "Heat leakage zone reaching 148.5 deg C (Normal pipe surface limit: 65 deg C) caused by gasket compression loss under thermal expansion cycles.",
         evidence: [
-          { doc: "IMG-V88-FLANGE-THERMAL.png", text: "'Heat gradient anomaly detected at top bolt 4 position. Delta +83.5°C above ambient.'" },
-          { doc: "SOP-MRPL-B3-PRESSURE.pdf", text: "'Thermal leaks exceeding 120°C on Class 600 pressure flanges require immediate torque audit.'" }
+          { doc: "IMG-V88-FLANGE-THERMAL.png", text: "'Heat gradient anomaly detected at top bolt 4 position. Delta +83.5 deg C above ambient.'" },
+          { doc: "SOP-MRPL-B3-PRESSURE.pdf", text: "'Thermal leaks exceeding 120 deg C on Class 600 pressure flanges require immediate torque audit.'" }
         ],
         actions: [
           "Isolate Flange V88 section and depressurize to 0 bar.",
@@ -141,11 +138,11 @@ class AuraAI {
         thinking: `[Aura AI DeepSeek Reasoning Engine]
 1. Sensor query: Boiler B-3 steam pressure series.
 2. Pressure drop detected: 42 Bar -> 34.4 Bar over 45 minutes.
-3. Correlate SOP-MRPL-B3-PRESSURE.pdf Section 3.2: Flame temp 820°C (< 850°C limit) indicates fuel-air damper actuator mismatch.`,
-        summary: "Boiler B-3 experienced an unexpected **18% steam pressure drop** accompanied by flame temperature oscillation.",
+3. Correlate SOP-MRPL-B3-PRESSURE.pdf Section 3.2: Flame temp 820 deg C (< 850 deg C limit) indicates fuel-air damper actuator mismatch.`,
+        summary: "Boiler B-3 experienced an unexpected 18% steam pressure drop accompanied by flame temperature oscillation.",
         rootCause: "Burner Nozzle 2 fuel-to-air damper stuck at 35% open position due to pneumatic actuator signal degradation.",
         evidence: [
-          { doc: "SOP-MRPL-B3-PRESSURE.pdf (Section 3.2)", text: "'Primary flame temp below 850°C indicates air damper mismatch.'" },
+          { doc: "SOP-MRPL-B3-PRESSURE.pdf (Section 3.2)", text: "'Primary flame temp below 850 deg C indicates air damper mismatch.'" },
           { doc: "LOG-CDU-QUARTERLY-2026.csv", text: "'Boiler B-3 steam discharge dropped from 42 Bar to 34.4 Bar.'" }
         ],
         actions: [
@@ -165,7 +162,7 @@ class AuraAI {
 1. Synthesize 14,250 BGE vector chunks across 48 local machinery tags.
 2. Overall Unit Health Score: 84.5% (Good).
 3. Backlog isolated to Pump 102 mechanical seal overhaul and Flange V88 stud re-torquing.`,
-        summary: "Cross-document RAG synthesis of all MRPL CDU equipment. Overall Unit Health Index: **84.5% (Good)**.",
+        summary: "Cross-document RAG synthesis of all MRPL CDU equipment. Overall Unit Health Index: 84.5% (Good).",
         rootCause: "Preventative audit synthesized 14,250 vector chunks. Backlog includes 2 scheduled seal replacements.",
         evidence: [
           { doc: "LOG-CDU-QUARTERLY-2026.csv", text: "'Processed 1.2M sensor telemetry data points across 48 local tags.'" },
@@ -180,7 +177,7 @@ class AuraAI {
       }
     ];
 
-    // Node Inspect Payload
+    // Node Inspect Data
     this.nodeDetails = {
       guardrail: { title: "Security Policy Node", prompt: "Enforce air-gap zero egress. Scrub PII and employee IDs.", output: { status: "SECURE", egressBytes: 0, piiMasked: 0 } },
       vector: { title: "Vector RAG Node", prompt: "Convert query to BGE embedding and search ChromaDB.", output: { chunksSearched: 14250, topScore: 0.942 } },
@@ -194,53 +191,63 @@ class AuraAI {
     this.renderVaultFiles();
     this.renderVisualInspector();
     this.renderTelemetryChart();
+    this.renderMonitorChart();
     this.updateVramUI();
     this.setupKeyboardShortcuts();
-    console.log("Aura AI Sovereign Workbench initialized.");
+    console.log("Aura AI Sovereign Engine Initialized.");
   }
 
   setupKeyboardShortcuts() {
     document.addEventListener('keydown', (e) => {
       if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
-        if (this.activeTab === 'console') {
+        if (this.activeView === 'console') {
           this.executeAgentQuery();
         }
       }
     });
   }
 
-  // Navigation Tab Switcher
-  switchMainTab(tab) {
-    this.activeTab = tab;
-    document.querySelectorAll('.nav-tab').forEach(btn => btn.classList.remove('active'));
-    document.querySelectorAll('.tab-view').forEach(view => view.classList.remove('active'));
+  // 7-View Navigation State Switcher
+  switchMainView(viewName) {
+    this.activeView = viewName;
+    
+    // Update sidebar navigation buttons
+    document.querySelectorAll('.nav-item').forEach(btn => btn.classList.remove('active'));
+    const targetNav = document.getElementById(`nav-btn-${viewName}`);
+    if (targetNav) targetNav.classList.add('active');
 
-    document.getElementById(`tab-btn-${tab}`).classList.add('active');
-    document.getElementById(`view-${tab}`).classList.add('active');
+    // Update view panels
+    document.querySelectorAll('.view-panel').forEach(panel => panel.classList.remove('active'));
+    const targetPanel = document.getElementById(`view-${viewName}`);
+    if (targetPanel) targetPanel.classList.add('active');
 
-    if (tab === 'inspector') {
+    // View specific initialization
+    if (viewName === 'inspector') {
       this.renderVisualInspector();
       this.renderTelemetryChart();
     }
-    if (tab === 'vault') {
+    if (viewName === 'vault') {
       this.renderVaultFiles();
+    }
+    if (viewName === 'telemetry') {
+      this.renderMonitorChart();
     }
   }
 
-  // RBAC Switcher
+  // RBAC Persona Switcher
   switchRBACPersona(persona) {
     this.currentRBAC = persona;
     this.renderVaultFiles();
-    if (document.querySelector('.article-box')) {
+    if (document.querySelector('.article-wrap')) {
       const currentScen = this.scenarios[this.currentScenarioIndex] || this.scenarios[0];
       this.renderResponseArticle(currentScen);
     }
   }
 
-  // Model & Quantization Controls
+  // Model & Quantization Tuning
   selectModelProfile(modelKey) {
     this.selectedModelKey = modelKey;
-    document.querySelectorAll('.model-card').forEach(card => {
+    document.querySelectorAll('.model-opt-card').forEach(card => {
       card.classList.toggle('active', card.dataset.model === modelKey);
     });
     this.calculateVRAMEst();
@@ -270,34 +277,55 @@ class AuraAI {
     this.temperature = parseFloat(document.getElementById('tempRange').value);
     this.endpointUrl = document.getElementById('endpointUrl').value;
 
-    document.getElementById('hdrModelName').innerText = model.name;
-    document.getElementById('hdrQuantTag').innerText = this.selectedQuant;
+    document.getElementById('sidebarModelName').innerText = model.name;
+    document.getElementById('sidebarQuant').innerText = `${this.selectedQuant} • ${model.speedTps} T/s`;
     this.updateVramUI(estVram);
-    this.closeModelModal();
+    alert(`Applied Model Config: ${model.name} (${this.selectedQuant})`);
   }
 
   updateVramUI(estVram = 38.4) {
     const percent = Math.min(100, Math.round((parseFloat(estVram) / 80.0) * 100));
-    document.getElementById('hdrVramFill').style.width = `${percent}%`;
-    document.getElementById('hdrVramTxt').innerText = `${estVram}/80GB`;
+    document.getElementById('sidebarVramFill').style.width = `${percent}%`;
+    document.getElementById('sidebarVramVal').innerText = `${estVram} / 80 GB`;
+    if (document.getElementById('monitorVramVal')) {
+      document.getElementById('monitorVramVal').innerText = `${estVram} / 80.0 GB`;
+    }
   }
 
   testLocalEndpoint() {
     const statusEl = document.getElementById('endpointStatus');
-    statusEl.innerText = "Pinging local endpoint...";
-    statusEl.style.color = "var(--accent-orange)";
+    statusEl.innerText = "Pinging endpoint...";
+    statusEl.className = "endpoint-status text-amber";
 
     fetch(this.endpointUrl, { method: 'HEAD' })
       .then(() => {
         this.isLocalEndpointActive = true;
-        statusEl.innerText = "Connected to Local Ollama/LM Studio Server!";
-        statusEl.style.color = "var(--accent-green)";
+        statusEl.innerText = "Status: Connected to Local Ollama/LM Studio";
+        statusEl.className = "endpoint-status text-green";
       })
       .catch(() => {
         this.isLocalEndpointActive = false;
-        statusEl.innerText = "Status: Using Built-in Sovereign Engine.";
-        statusEl.style.color = "var(--accent-cyan)";
+        statusEl.innerText = "Status: Using Built-in Sovereign Engine";
+        statusEl.className = "endpoint-status text-cyan";
       });
+  }
+
+  // Search Filters
+  handleGlobalSearch() {
+    const term = (document.getElementById('globalSearchInput')?.value || '').toLowerCase();
+    if (term.length > 2) {
+      this.switchMainView('vault');
+      document.getElementById('vaultSearchInput').value = term;
+      this.filterVaultFiles();
+    }
+  }
+
+  filterSOPList(term) {
+    const cards = document.querySelectorAll('#sopGrid .sop-card');
+    cards.forEach(c => {
+      const match = c.innerText.toLowerCase().includes(term.toLowerCase());
+      c.style.display = match ? 'flex' : 'none';
+    });
   }
 
   // Vault Management
@@ -315,13 +343,13 @@ class AuraAI {
     });
 
     if (filtered.length === 0) {
-      fileListEl.innerHTML = `<div style="grid-column: 1/-1; text-align:center; padding:30px; color:var(--text-muted); font-size:12px;">No matching confidential documents found</div>`;
+      fileListEl.innerHTML = `<div style="grid-column: 1/-1; text-align:center; padding:30px; color:var(--text-sub); font-size:12px;">No matching confidential documents found</div>`;
       return;
     }
 
     filtered.forEach(file => {
       const card = document.createElement('div');
-      card.className = 'f-card';
+      card.className = 'file-card';
       card.onclick = () => this.selectVaultFile(file);
 
       let displayName = file.name;
@@ -330,7 +358,9 @@ class AuraAI {
       }
 
       card.innerHTML = `
-        <div class="f-icon">${file.icon}</div>
+        <div class="f-icon-box">
+          <svg style="width:24px;height:24px;" viewBox="0 0 24 24"><path fill="currentColor" d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg>
+        </div>
         <div class="f-info">
           <span class="f-name">${displayName}</span>
           <span class="f-desc">${file.desc}</span>
@@ -343,7 +373,7 @@ class AuraAI {
 
   switchVaultFilter(filter) {
     this.activeVaultFilter = filter;
-    document.querySelectorAll('.vtab-btn').forEach(btn => {
+    document.querySelectorAll('.ftab-btn').forEach(btn => {
       btn.classList.toggle('active', btn.dataset.tab === filter);
     });
     this.renderVaultFiles();
@@ -362,7 +392,7 @@ class AuraAI {
       } else {
         this.activeImageMode = 'flange';
       }
-      this.switchMainTab('inspector');
+      this.switchMainView('inspector');
     }
   }
 
@@ -381,7 +411,6 @@ class AuraAI {
       type: isImage ? 'images' : 'docs',
       size: (file.size / (1024 * 1024)).toFixed(1) + ' MB',
       date: new Date().toISOString().split('T')[0],
-      icon: isImage ? '📷' : '📄',
       desc: `User Ingested File (${file.name})`,
       content: ''
     };
@@ -399,7 +428,7 @@ class AuraAI {
           this.activeImageMode = 'custom';
           this.customUploadedImage = img;
           document.getElementById('activeImageTitle').innerText = `${file.name} (Custom Scan)`;
-          this.switchMainTab('inspector');
+          this.switchMainView('inspector');
         };
         img.src = e.target.result;
       };
@@ -430,7 +459,7 @@ class AuraAI {
 
     const queryText = document.getElementById('queryInput').value || this.scenarios[0].query;
     
-    // Check custom file match
+    // Check custom match
     let customMatch = null;
     const customDocs = this.vaultFiles.filter(f => f.id.startsWith('FILE-'));
     if (customDocs.length > 0) {
@@ -449,7 +478,7 @@ class AuraAI {
 1. Target custom document: ${customMatch.name}.
 2. BGE vector similarity match found chunk of length ${customMatch.content.length} chars.
 3. Formulate custom SOP actions.`,
-        summary: `Synthesized findings from user uploaded document **${customMatch.name}**. Key extract: "${customMatch.content.slice(0, 150)}..."`,
+        summary: `Synthesized findings from user uploaded document ${customMatch.name}. Key extract: "${customMatch.content.slice(0, 150)}..."`,
         rootCause: `Vector RAG retrieval confirmed query relevance in ${customMatch.name}.`,
         evidence: [{ doc: `${customMatch.name} (Ingested Chunk 1)`, text: `"${customMatch.content.slice(0, 200)}..."` }],
         actions: ["Verify parameters against plant SOP.", "Log report into air-gapped audit trail."],
@@ -464,7 +493,7 @@ class AuraAI {
     // Reset Workflow UI
     const badge = document.getElementById('workflowStatusBadge');
     badge.innerText = 'Running';
-    badge.className = 'status-tag running';
+    badge.className = 'status-badge running';
 
     const timerEl = document.getElementById('executionTimer');
     let startTime = performance.now();
@@ -476,20 +505,20 @@ class AuraAI {
     const nodes = ['guardrail', 'vector', 'vision', 'reasoner', 'synthesizer'];
     nodes.forEach(n => {
       const el = document.getElementById(`node-${n}`);
-      el.className = 'pipe-node';
-      el.querySelector('.node-state').innerText = 'Pending';
+      el.className = 'node-box';
+      el.querySelector('.node-state-txt').innerText = 'Ready';
     });
 
     const outputContainer = document.getElementById('outputContainer');
     outputContainer.innerHTML = `
-      <div class="empty-state">
-        <div class="empty-icon">⚡</div>
+      <div class="placeholder-box">
+        <svg class="ph-icon" viewBox="0 0 24 24"><path fill="currentColor" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg>
         <h3>Executing LangGraph Autonomous Pipeline...</h3>
         <p>Running on-premise inference with <strong>${this.modelProfiles[this.selectedModelKey].name}</strong> (${this.selectedQuant}).</p>
       </div>
     `;
 
-    // Step pipeline execution
+    // Step animation
     await this.animateNode('guardrail', 'PII Masked', 250);
     await this.animateNode('vector', '14,250 Chunks', 350);
     await this.animateNode('vision', 'Qwen-VL Done', 400);
@@ -498,7 +527,7 @@ class AuraAI {
 
     clearInterval(timerInterval);
     badge.innerText = 'Completed';
-    badge.className = 'status-tag completed';
+    badge.className = 'status-badge completed';
 
     this.activeImageMode = scenario.imageMode;
     document.getElementById('valDefectType').innerText = scenario.telemetry.defectType;
@@ -514,12 +543,12 @@ class AuraAI {
   animateNode(nodeId, statusText, delayMs) {
     return new Promise(resolve => {
       const el = document.getElementById(`node-${nodeId}`);
-      el.className = 'pipe-node executing';
-      el.querySelector('.node-state').innerText = 'Processing...';
+      el.className = 'node-box executing';
+      el.querySelector('.node-state-txt').innerText = 'Processing...';
 
       setTimeout(() => {
-        el.className = 'pipe-node done';
-        el.querySelector('.node-state').innerText = statusText;
+        el.className = 'node-box done';
+        el.querySelector('.node-state-txt').innerText = statusText;
         resolve();
       }, delayMs);
     });
@@ -528,57 +557,57 @@ class AuraAI {
   renderResponseArticle(scenario) {
     const outputContainer = document.getElementById('outputContainer');
     outputContainer.innerHTML = `
-      <article class="article-box">
+      <article class="article-wrap">
         <div class="article-hdr">
-          <h2 class="article-title">${scenario.title}</h2>
+          <h2>${scenario.title}</h2>
           <span class="p-badge p-${scenario.priority}">${scenario.priorityLabel}</span>
         </div>
 
         <details class="cot-box" open>
           <summary class="cot-title">
-            🧠 DeepSeek-R1 Chain-of-Thought (CoT) Reasoning Chain
+            DeepSeek-R1 Chain-of-Thought (CoT) Reasoning Chain
           </summary>
-          <div class="cot-body">${scenario.thinking}</div>
+          <div class="cot-content">${scenario.thinking}</div>
         </details>
 
-        <div class="card-block">
+        <div class="section-card">
           <h4>Problem Overview & Multimodal Findings</h4>
           <p>${scenario.summary}</p>
         </div>
 
-        <div class="card-block">
+        <div class="section-card">
           <h4>Root Cause & Telemetry Correlation</h4>
           <p>${scenario.rootCause}</p>
         </div>
 
-        <div class="card-block">
+        <div class="section-card">
           <h4>Confidential Evidence Citations</h4>
           <div class="evidence-grid">
             ${scenario.evidence.map(e => `
               <div class="ev-card">
-                <span class="ev-doc">📌 ${e.doc}</span>
+                <span class="ev-doc">${e.doc}</span>
                 <span class="ev-txt">${e.text}</span>
               </div>
             `).join('')}
           </div>
         </div>
 
-        <div class="card-block">
+        <div class="section-card">
           <h4>Corrective SOP Action Plan</h4>
           <ul class="action-list">
             ${scenario.actions.map(a => `<li>${a}</li>`).join('')}
           </ul>
         </div>
 
-        <div class="export-group">
-          <button class="btn btn-sm btn-outline" onclick="app.exportDiagnosticReportMD()">📄 Export Markdown</button>
-          <button class="btn btn-sm btn-outline" onclick="app.exportAuditLogJSON()">🛡️ Export Audit JSON</button>
+        <div class="export-bar">
+          <button class="btn btn-sm btn-outline" onclick="app.exportDiagnosticReportMD()">Export Markdown</button>
+          <button class="btn btn-sm btn-outline" onclick="app.exportAuditLogJSON()">Export Audit JSON</button>
         </div>
       </article>
     `;
   }
 
-  // Node Inspection Modal
+  // Node Inspector Modal
   inspectAgentNode(nodeId) {
     const details = this.nodeDetails[nodeId];
     if (!details) return;
@@ -589,12 +618,9 @@ class AuraAI {
   }
 
   closeNodeModal() { document.getElementById('nodeModal').classList.add('hidden'); }
-  openModelModal() { document.getElementById('modelModal').classList.remove('hidden'); }
-  closeModelModal() { document.getElementById('modelModal').classList.add('hidden'); }
-  openAuditModal() { document.getElementById('auditModal').classList.remove('hidden'); }
-  closeAuditModal() { document.getElementById('auditModal').classList.add('hidden'); }
+  showNotificationModal() { alert("System Alerts: 0 Active Critical Incidents. All 14,250 BGE vector embeddings verified intact."); }
 
-  // Visual Canvas Renderer
+  // Visual Inspection Canvas
   renderVisualInspector() {
     const canvas = document.getElementById('inspectionCanvas');
     if (!canvas) return;
@@ -605,7 +631,7 @@ class AuraAI {
     const showThermal = document.getElementById('toggleThermal')?.checked ?? true;
     const showDefects = document.getElementById('toggleDefects')?.checked ?? true;
 
-    ctx.fillStyle = '#07090e';
+    ctx.fillStyle = '#080b10';
     ctx.fillRect(0, 0, width, height);
 
     if (this.activeImageMode === 'custom' && this.customUploadedImage) {
@@ -618,7 +644,7 @@ class AuraAI {
 
       if (showThermal) {
         const grad = ctx.createRadialGradient(width / 2, height / 2, 10, width / 2, height / 2, 100);
-        grad.addColorStop(0, 'rgba(255, 0, 0, 0.7)');
+        grad.addColorStop(0, 'rgba(255, 82, 82, 0.7)');
         grad.addColorStop(1, 'transparent');
         ctx.fillStyle = grad;
         ctx.beginPath();
@@ -627,7 +653,7 @@ class AuraAI {
       }
 
       if (showDefects) {
-        ctx.strokeStyle = '#00f2ff';
+        ctx.strokeStyle = '#00f2fe';
         ctx.lineWidth = 2;
         ctx.strokeRect(shiftX + 20, shiftY + 20, (img.width * ratio) - 40, (img.height * ratio) - 40);
       }
@@ -637,7 +663,7 @@ class AuraAI {
     if (this.activeImageMode === 'pump') {
       document.getElementById('activeImageTitle').innerText = "Pump 102 Assembly Scan";
 
-      ctx.strokeStyle = '#1e293b';
+      ctx.strokeStyle = '#1c2438';
       ctx.lineWidth = 4;
       ctx.beginPath();
       ctx.arc(200, 170, 90, 0, Math.PI * 2);
@@ -645,14 +671,14 @@ class AuraAI {
 
       ctx.strokeRect(50, 140, 100, 60);
       ctx.strokeRect(170, 30, 60, 80);
-      ctx.fillStyle = '#334155';
+      ctx.fillStyle = '#161c2c';
       ctx.fillRect(290, 155, 180, 30);
       ctx.fillRect(270, 130, 80, 80);
 
       if (showThermal) {
         const grad = ctx.createRadialGradient(310, 170, 5, 310, 170, 95);
-        grad.addColorStop(0, 'rgba(239, 68, 68, 0.9)');
-        grad.addColorStop(0.4, 'rgba(245, 158, 11, 0.6)');
+        grad.addColorStop(0, 'rgba(255, 82, 82, 0.9)');
+        grad.addColorStop(0.4, 'rgba(255, 193, 7, 0.6)');
         grad.addColorStop(1, 'transparent');
         ctx.fillStyle = grad;
         ctx.beginPath();
@@ -661,27 +687,27 @@ class AuraAI {
       }
 
       if (showDefects) {
-        ctx.strokeStyle = '#ef4444';
+        ctx.strokeStyle = '#ff5252';
         ctx.lineWidth = 2;
         ctx.strokeRect(260, 120, 100, 100);
 
-        ctx.fillStyle = '#ef4444';
+        ctx.fillStyle = '#ff5252';
         ctx.fillRect(260, 100, 150, 20);
-        ctx.fillStyle = '#fff';
+        ctx.fillStyle = '#ffffff';
         ctx.font = '10px Fira Code';
-        ctx.fillText('CRITICAL: 94.8°C Hotspot', 264, 114);
+        ctx.fillText('CRITICAL: 94.8 deg C Hotspot', 264, 114);
       }
 
     } else if (this.activeImageMode === 'flange') {
       document.getElementById('activeImageTitle').innerText = "Pipe Flange V88 Thermal Scan";
 
-      ctx.fillStyle = '#1e293b';
+      ctx.fillStyle = '#1c2438';
       ctx.fillRect(60, 130, 440, 80);
       ctx.fillRect(250, 70, 60, 200);
 
       if (showThermal) {
         const grad = ctx.createRadialGradient(280, 95, 2, 280, 95, 80);
-        grad.addColorStop(0, 'rgba(239, 68, 68, 0.95)');
+        grad.addColorStop(0, 'rgba(255, 82, 82, 0.95)');
         grad.addColorStop(1, 'transparent');
         ctx.fillStyle = grad;
         ctx.beginPath();
@@ -690,7 +716,7 @@ class AuraAI {
       }
 
       if (showDefects) {
-        ctx.strokeStyle = '#ef4444';
+        ctx.strokeStyle = '#ff5252';
         ctx.lineWidth = 2;
         ctx.strokeRect(240, 60, 80, 70);
       }
@@ -698,12 +724,12 @@ class AuraAI {
     } else { // boiler
       document.getElementById('activeImageTitle').innerText = "Boiler B-3 Burner Scan";
 
-      ctx.fillStyle = '#111827';
+      ctx.fillStyle = '#111622';
       ctx.fillRect(100, 50, 360, 240);
 
       const flameGrad = ctx.createRadialGradient(280, 170, 10, 280, 170, 100);
-      flameGrad.addColorStop(0, '#fff');
-      flameGrad.addColorStop(0.5, '#f59e0b');
+      flameGrad.addColorStop(0, '#ffffff');
+      flameGrad.addColorStop(0.5, '#ffc107');
       flameGrad.addColorStop(1, 'transparent');
       ctx.fillStyle = flameGrad;
       ctx.beginPath();
@@ -711,14 +737,14 @@ class AuraAI {
       ctx.fill();
 
       if (showDefects) {
-        ctx.strokeStyle = '#f59e0b';
+        ctx.strokeStyle = '#ffc107';
         ctx.lineWidth = 2;
         ctx.strokeRect(220, 120, 120, 100);
       }
     }
   }
 
-  // Telemetry Chart
+  // SCADA Sensor Telemetry Canvas
   renderTelemetryChart() {
     const canvas = document.getElementById('telemetryCanvas');
     if (!canvas) return;
@@ -726,11 +752,11 @@ class AuraAI {
     const width = canvas.width;
     const height = canvas.height;
 
-    ctx.fillStyle = '#07090e';
+    ctx.fillStyle = '#080b10';
     ctx.fillRect(0, 0, width, height);
 
     // Grid
-    ctx.strokeStyle = '#131926';
+    ctx.strokeStyle = '#161c2c';
     ctx.lineWidth = 1;
     for (let y = 30; y < height - 20; y += 30) {
       ctx.beginPath();
@@ -739,9 +765,9 @@ class AuraAI {
       ctx.stroke();
     }
 
-    // Limit Line (4.5 mm/s)
+    // Limit Line
     const limitY = height - 90;
-    ctx.strokeStyle = '#f59e0b';
+    ctx.strokeStyle = '#ffc107';
     ctx.setLineDash([4, 4]);
     ctx.beginPath();
     ctx.moveTo(40, limitY);
@@ -749,11 +775,10 @@ class AuraAI {
     ctx.stroke();
     ctx.setLineDash([]);
 
-    ctx.fillStyle = '#f59e0b';
+    ctx.fillStyle = '#ffc107';
     ctx.font = '9px Fira Code';
     ctx.fillText('ISO 10816 SAFE LIMIT (4.50 mm/s)', 45, limitY - 4);
 
-    // Data points
     const data = this.liveTelemetryData;
     const stepX = (width - 60) / (data.length - 1);
     const points = data.map((val, idx) => {
@@ -763,8 +788,8 @@ class AuraAI {
     });
 
     const areaGrad = ctx.createLinearGradient(0, 0, 0, height);
-    areaGrad.addColorStop(0, 'rgba(239, 68, 68, 0.4)');
-    areaGrad.addColorStop(1, 'rgba(0, 242, 255, 0.05)');
+    areaGrad.addColorStop(0, 'rgba(255, 82, 82, 0.4)');
+    areaGrad.addColorStop(1, 'rgba(0, 242, 254, 0.05)');
 
     ctx.beginPath();
     ctx.moveTo(points[0].x, points[0].y);
@@ -777,7 +802,7 @@ class AuraAI {
     ctx.fillStyle = areaGrad;
     ctx.fill();
 
-    ctx.strokeStyle = '#ef4444';
+    ctx.strokeStyle = '#ff5252';
     ctx.lineWidth = 2.5;
     ctx.beginPath();
     ctx.moveTo(points[0].x, points[0].y);
@@ -787,11 +812,52 @@ class AuraAI {
     ctx.stroke();
 
     points.forEach((pt) => {
-      ctx.fillStyle = pt.val > 4.5 ? '#ef4444' : '#00f2ff';
+      ctx.fillStyle = pt.val > 4.5 ? '#ff5252' : '#00f2fe';
       ctx.beginPath();
       ctx.arc(pt.x, pt.y, pt.val > 8.0 ? 5 : 3, 0, Math.PI * 2);
       ctx.fill();
     });
+  }
+
+  // Telemetry Monitor Latency Canvas
+  renderMonitorChart() {
+    const canvas = document.getElementById('monitorCanvas');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    const width = canvas.width;
+    const height = canvas.height;
+
+    ctx.fillStyle = '#080b10';
+    ctx.fillRect(0, 0, width, height);
+
+    ctx.strokeStyle = '#161c2c';
+    for (let x = 50; x < width; x += 60) {
+      ctx.beginPath();
+      ctx.moveTo(x, 20);
+      ctx.lineTo(x, height - 30);
+      ctx.stroke();
+    }
+
+    const points = [
+      { x: 50, y: height - 50 },
+      { x: 150, y: height - 70 },
+      { x: 250, y: height - 60 },
+      { x: 350, y: height - 120 },
+      { x: 450, y: height - 180 },
+      { x: 550, y: height - 110 },
+      { x: 650, y: height - 70 },
+      { x: 750, y: height - 65 },
+      { x: 850, y: height - 60 }
+    ];
+
+    ctx.strokeStyle = '#00f2fe';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(points[0].x, points[0].y);
+    for (let i = 1; i < points.length; i++) {
+      ctx.lineTo(points[i].x, points[i].y);
+    }
+    ctx.stroke();
   }
 
   toggleLiveSCADA() {
@@ -801,7 +867,7 @@ class AuraAI {
     const alertBox = document.getElementById('anomalyAlertBox');
 
     if (this.isLiveSCADA) {
-      dot.className = 'live-pulse active';
+      dot.className = 'live-pulse-dot active';
       btn.innerText = 'Pause Feed';
       btn.className = 'btn btn-sm btn-danger';
 
@@ -823,7 +889,7 @@ class AuraAI {
         this.renderTelemetryChart();
       }, 900);
     } else {
-      dot.className = 'live-pulse';
+      dot.className = 'live-pulse-dot';
       btn.innerText = 'Stream Live';
       btn.className = 'btn btn-sm btn-outline';
       clearInterval(this.scadaTimer);
@@ -833,7 +899,7 @@ class AuraAI {
 
   setTelemetryTimeframe(tf) {
     this.telemetryTimeframe = tf;
-    document.querySelectorAll('.timeframe-buttons .btn-tf').forEach(btn => {
+    document.querySelectorAll('.tf-btn-group .btn-tf').forEach(btn => {
       btn.classList.toggle('active', btn.id === `tf-${tf}`);
     });
     if (tf === '24h') this.liveTelemetryData = [2.1, 2.3, 2.2, 2.5, 2.8, 2.9, 3.1, 2.7, 2.4];
@@ -842,7 +908,7 @@ class AuraAI {
     this.renderTelemetryChart();
   }
 
-  // Export Reports
+  // Export File Tools
   exportDiagnosticReportMD() {
     const scenario = this.scenarios[this.currentScenarioIndex] || this.scenarios[0];
     const mdContent = `# Aura AI — Sovereign Diagnostic Report
@@ -894,7 +960,7 @@ ${scenario.actions.map((a, i) => `${i + 1}. ${a}`).join('\n')}
   }
 }
 
-// Global Instantiation
+// Global App Instantiation
 const app = new AuraAI();
 window.addEventListener('DOMContentLoaded', () => {
   app.init();
