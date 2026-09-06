@@ -751,6 +751,7 @@ class AuraAI {
     this.workflowHistory.unshift(newRun);
     try {
       localStorage.setItem('aura_workflow_history', JSON.stringify(this.workflowHistory));
+      localStorage.setItem('aura_search_history', JSON.stringify(this.workflowHistory));
     } catch(e) {}
 
     this.isExecuting = false;
@@ -1530,6 +1531,18 @@ ${scenario.actions.map((a, i) => `${i + 1}. ${a}`).join('\n')}
     this.renderHistoryView();
   }
 
+  clearHistory() {
+    if (confirm("Are you sure you want to clear your saved search history? This action cannot be undone.")) {
+      this.workflowHistory = [];
+      try {
+        localStorage.removeItem('aura_workflow_history');
+        localStorage.removeItem('aura_search_history');
+      } catch(e) {}
+      this.renderHistoryView();
+      this.showToast("Search & workflow history cleared successfully", "success");
+    }
+  }
+
   renderHistoryView() {
     const tbody = document.getElementById('historyTableBody');
     if (!tbody) return;
@@ -1548,7 +1561,17 @@ ${scenario.actions.map((a, i) => `${i + 1}. ${a}`).join('\n')}
     });
 
     if (filtered.length === 0) {
-      tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; padding: 24px; color: var(--text-secondary);">No workflow execution history records found matching filter.</td></tr>`;
+      tbody.innerHTML = `
+        <tr>
+          <td colspan="7" style="padding: 0;">
+            <div class="empty-state-history">
+              <svg viewBox="0 0 24 24"><path fill="currentColor" d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
+              <h4>No Saved Searches Found</h4>
+              <p>No previous diagnostic workflows match your search or filter criteria. Submit a new query to generate reports.</p>
+            </div>
+          </td>
+        </tr>
+      `;
       return;
     }
 

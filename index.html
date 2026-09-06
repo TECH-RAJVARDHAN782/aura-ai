@@ -925,11 +925,17 @@
         <div class="history-panel-wrapper">
           <div class="v-top-bar">
             <div>
-              <h2>Workflow Execution History</h2>
-              <p>Audit trail of all previous multi-agent diagnostic runs and SCADA correlation workflows.</p>
+              <h2>Workflow & Search History</h2>
+              <p>Audit trail of all previous multi-agent diagnostic runs and search queries.</p>
             </div>
-            <div class="v-search-box">
-              <input type="text" id="historySearchInput" placeholder="Search by asset tag, query, or run ID..." oninput="app.renderHistoryView()">
+            <div class="hist-actions-wrap">
+              <div class="v-search-box">
+                <input type="text" id="historySearchInput" placeholder="Search by asset tag, query, or run ID..." oninput="app.renderHistoryView()">
+              </div>
+              <button class="btn btn-sm btn-danger" onclick="app.clearHistory()" title="Clear all saved search history">
+                <svg class="b-icon" viewBox="0 0 24 24"><path fill="currentColor" d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>
+                Clear History
+              </button>
             </div>
           </div>
 

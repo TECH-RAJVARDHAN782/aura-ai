@@ -1650,3 +1650,42 @@ canvas { display: block; max-width: 100%; }
   width: 16px;
   height: 16px;
 }
+
+/* WORKFLOW & SEARCH HISTORY PANEL STYLING */
+.hist-actions-wrap {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.empty-state-history {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 48px 24px;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: var(--radius-lg);
+  text-align: center;
+  gap: 12px;
+  color: var(--text-secondary);
+}
+
+.empty-state-history svg {
+  width: 42px;
+  height: 42px;
+  color: var(--text-muted);
+}
+
+.empty-state-history h4 {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.empty-state-history p {
+  font-size: 13px;
+  color: var(--text-secondary);
+  max-width: 420px;
+}
