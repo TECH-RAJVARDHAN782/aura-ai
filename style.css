@@ -827,3 +827,552 @@ canvas { display: block; max-width: 100%; }
   .inspector-dashboard-grid, .sec-grid-2, .set-grid-2 { grid-template-columns: 1fr; }
   .an-stats-row { grid-template-columns: repeat(2, 1fr); }
 }
+
+/* ==========================================================================
+   AUTHENTICATION GATEWAY STYLING (LOG IN & SIGN UP MODAL / OVERLAY)
+   ========================================================================== */
+
+/* Full Screen Overlay with Off-White Blueprint Tech Grid */
+.auth-gateway-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 10000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background-color: #F4F7F6;
+  background-image: 
+    radial-gradient(circle, rgba(15, 23, 42, 0.08) 1px, transparent 1px),
+    linear-gradient(to right, rgba(148, 163, 184, 0.18) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(148, 163, 184, 0.18) 1px, transparent 1px);
+  background-size: 24px 24px, 40px 40px, 40px 40px;
+  opacity: 1;
+  visibility: visible;
+  transition: opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1), transform 0.4s cubic-bezier(0.4, 0, 0.2, 1), visibility 0.4s ease;
+  overflow-y: auto;
+}
+
+.auth-gateway-overlay.auth-hidden {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transform: scale(1.03);
+}
+
+/* Deep Dark Slate Navy Auth Card */
+.auth-card {
+  background: #0F172A;
+  border: 1px solid rgba(55, 65, 81, 0.8);
+  border-radius: 16px;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.4), 0 0 50px rgba(6, 182, 212, 0.12);
+  width: 100%;
+  max-width: 480px;
+  padding: 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  position: relative;
+  box-sizing: border-box;
+}
+
+/* Header & Sovereign Security Gateway Badge */
+.auth-header {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.auth-brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.auth-logo-box {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #06B6D4 0%, #14B8A6 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #030712;
+  box-shadow: 0 0 15px rgba(6, 182, 212, 0.4);
+}
+
+.auth-logo-svg {
+  width: 24px;
+  height: 24px;
+}
+
+.auth-brand-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.auth-title {
+  font-family: var(--font-heading);
+  font-size: 22px;
+  font-weight: 800;
+  letter-spacing: 1px;
+  color: #FFFFFF;
+}
+
+.auth-sub {
+  font-size: 12px;
+  color: #94A3B8;
+  font-weight: 500;
+}
+
+.auth-status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(16, 185, 129, 0.1);
+  border: 1px solid rgba(16, 185, 129, 0.3);
+  color: #10B981;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 6px 12px;
+  border-radius: 20px;
+  width: fit-content;
+}
+
+.status-pulse-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #10B981;
+  box-shadow: 0 0 8px #10B981;
+  animation: authPulse 1.8s infinite;
+}
+
+@keyframes authPulse {
+  0% { transform: scale(0.95); opacity: 0.8; }
+  50% { transform: scale(1.2); opacity: 1; }
+  100% { transform: scale(0.95); opacity: 0.8; }
+}
+
+/* Tab Switcher */
+.auth-tabs {
+  display: flex;
+  background: #111827;
+  padding: 4px;
+  border-radius: 10px;
+  border: 1px solid #374151;
+  gap: 4px;
+}
+
+.auth-tab-btn {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px;
+  background: transparent;
+  border: none;
+  border-radius: 8px;
+  color: #94A3B8;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.auth-tab-btn .tab-svg {
+  width: 16px;
+  height: 16px;
+}
+
+.auth-tab-btn.active {
+  background: rgba(6, 182, 212, 0.15);
+  color: #06B6D4;
+  border: 1px solid rgba(6, 182, 212, 0.3);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.auth-tab-btn:hover:not(.active) {
+  color: #FFFFFF;
+  background: rgba(255, 255, 255, 0.05);
+}
+
+/* Alert Badges (Error & Success) */
+.auth-alert-badge {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.auth-alert-badge.hidden {
+  display: none !important;
+}
+
+.auth-alert-badge.error {
+  background: rgba(239, 68, 68, 0.15);
+  border: 1px solid rgba(239, 68, 68, 0.4);
+  color: #EF4444;
+}
+
+.auth-alert-badge.success {
+  background: rgba(16, 185, 129, 0.15);
+  border: 1px solid rgba(16, 185, 129, 0.4);
+  color: #10B981;
+}
+
+.alert-icon {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+}
+
+/* Forms & Input Groups */
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.auth-form.hidden {
+  display: none !important;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.form-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: #E2E8F0;
+}
+
+.input-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.input-svg {
+  position: absolute;
+  left: 12px;
+  width: 18px;
+  height: 18px;
+  color: #64748B;
+  pointer-events: none;
+  transition: color 0.2s ease;
+}
+
+.auth-input, .auth-select {
+  width: 100%;
+  background: #111827;
+  border: 1px solid #374151;
+  border-radius: 10px;
+  padding: 12px 14px 12px 40px;
+  font-size: 13px;
+  color: #FFFFFF;
+  font-family: inherit;
+  box-sizing: border-box;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.auth-input::placeholder {
+  color: #64748B;
+}
+
+.auth-input:focus, .auth-select:focus {
+  border-color: #06B6D4;
+  box-shadow: 0 0 0 3px rgba(6, 182, 212, 0.25);
+  outline: none;
+}
+
+.auth-input:focus ~ .input-svg {
+  color: #06B6D4;
+}
+
+.pw-toggle-btn {
+  position: absolute;
+  right: 12px;
+  background: transparent;
+  border: none;
+  color: #64748B;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px;
+}
+
+.pw-toggle-btn:hover {
+  color: #06B6D4;
+}
+
+.eye-svg {
+  width: 18px;
+  height: 18px;
+}
+
+.auth-select {
+  appearance: none;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%2364748B'%3e%3cpath d='M7 10l5 5 5-5z'/%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  background-size: 18px;
+}
+
+/* Password Strength Indicator */
+.pw-strength-track {
+  height: 4px;
+  background: #1E293B;
+  border-radius: 2px;
+  overflow: hidden;
+  margin-top: 4px;
+}
+
+.pw-strength-fill {
+  height: 100%;
+  width: 0%;
+  transition: width 0.3s ease, background-color 0.3s ease;
+  background: #EF4444;
+}
+
+/* Options Row (Checkbox & Forgot Key) */
+.auth-row-options {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 12px;
+}
+
+.airgap-checkbox-lbl {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #94A3B8;
+  cursor: pointer;
+}
+
+.airgap-checkbox-lbl input[type="checkbox"] {
+  accent-color: #06B6D4;
+  width: 15px;
+  height: 15px;
+  cursor: pointer;
+}
+
+.forgot-link {
+  color: #06B6D4;
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.2s ease;
+}
+
+.forgot-link:hover {
+  color: #00F2FE;
+  text-decoration: underline;
+}
+
+/* Submit Buttons */
+.auth-submit-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 14px;
+  background: linear-gradient(135deg, #06B6D4 0%, #00F2FE 100%);
+  border: none;
+  border-radius: 10px;
+  color: #030712;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 4px 15px rgba(6, 182, 212, 0.35);
+  transition: transform 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease;
+  margin-top: 4px;
+}
+
+.auth-submit-btn .btn-lock-svg {
+  width: 18px;
+  height: 18px;
+}
+
+.auth-submit-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(6, 182, 212, 0.5);
+  filter: brightness(1.08);
+}
+
+.auth-submit-btn:active {
+  transform: translateY(0);
+}
+
+/* Handshake Loading Box */
+.auth-handshake-box {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background: rgba(6, 182, 212, 0.08);
+  border: 1px solid rgba(6, 182, 212, 0.3);
+  border-radius: 10px;
+  padding: 14px 18px;
+}
+
+.auth-handshake-box.hidden {
+  display: none !important;
+}
+
+.handshake-spinner {
+  width: 22px;
+  height: 22px;
+  border: 3px solid rgba(6, 182, 212, 0.2);
+  border-top-color: #06B6D4;
+  border-radius: 50%;
+  animation: authSpinnerRotate 0.8s linear infinite;
+  flex-shrink: 0;
+}
+
+@keyframes authSpinnerRotate {
+  to { transform: rotate(360deg); }
+}
+
+.handshake-text-wrap {
+  display: flex;
+  flex-direction: column;
+}
+
+.handshake-text-wrap strong {
+  font-size: 13px;
+  color: #FFFFFF;
+}
+
+.handshake-text-wrap span {
+  font-size: 11px;
+  color: #06B6D4;
+}
+
+/* SSO Division & Options */
+.auth-divider {
+  display: flex;
+  align-items: center;
+  text-align: center;
+  color: #475569;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  margin: 4px 0;
+}
+
+.auth-divider::before, .auth-divider::after {
+  content: '';
+  flex: 1;
+  border-bottom: 1px solid #1E293B;
+}
+
+.auth-divider span {
+  padding: 0 10px;
+}
+
+.sso-options-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.sso-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 10px 14px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  color: #E2E8F0;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.sso-btn .sso-svg {
+  width: 16px;
+  height: 16px;
+}
+
+.sso-btn:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(6, 182, 212, 0.4);
+  color: #FFFFFF;
+}
+
+.sso-row-two {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+/* Drawer Log Out Button & Top Nav Mini Logout */
+.drawer-logout-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  margin-top: 12px;
+  padding: 10px;
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.25);
+  border-radius: 8px;
+  color: #EF4444;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.drawer-logout-btn .logout-svg {
+  width: 16px;
+  height: 16px;
+}
+
+.drawer-logout-btn:hover {
+  background: rgba(239, 68, 68, 0.2);
+  border-color: rgba(239, 68, 68, 0.5);
+  color: #FFFFFF;
+}
+
+.top-logout-mini-btn {
+  background: transparent;
+  border: none;
+  color: #64748B;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px;
+  margin-left: 6px;
+  border-radius: 4px;
+  transition: color 0.2s ease, background 0.2s ease;
+}
+
+.top-logout-mini-btn:hover {
+  color: #EF4444;
+  background: rgba(239, 68, 68, 0.15);
+}
+
+.mini-logout-svg {
+  width: 16px;
+  height: 16px;
+}
+

@@ -14,6 +14,26 @@ class AuraAI {
     this.customUploadedImage = null;
     this.telemetryTimeframe = '7d';
 
+    // Auth Gateway System State
+    this.authTab = 'login';
+    this.authState = {
+      isAuthenticated: false,
+      currentUser: null,
+      userRole: 'Engineer',
+      airGappedSession: true
+    };
+    try {
+      const stored = localStorage.getItem('aura_auth_session');
+      if (stored) {
+        const parsed = JSON.parse(stored);
+        if (parsed && parsed.isAuthenticated) {
+          this.authState = parsed;
+        }
+      }
+    } catch(e) {
+      console.warn("Could not load auth session from local storage", e);
+    }
+
     // Model Runtime State
     this.selectedModelKey = 'llama-3.3-70b';
     this.selectedQuant = 'Q4_K_M';
@@ -195,6 +215,7 @@ class AuraAI {
     this.renderAnalyticsChart();
     this.updateVramUI();
     this.setupKeyboardShortcuts();
+    this.checkAuthSession();
     console.log("Aura AI Cybernetic Engine Initialized.");
   }
 
@@ -979,6 +1000,352 @@ ${scenario.actions.map((a, i) => `${i + 1}. ${a}`).join('\n')}
       systemCheck: "PASSED_AIRGAP_ENFORCED"
     };
     this.downloadFile(`Aura_AI_Audit_${Date.now()}.json`, JSON.stringify(auditObj, null, 2), 'application/json');
+  }
+
+  // ==========================================================================
+  // AUTHENTICATION GATEWAY SYSTEM (DYNAMIC STATE & HANDSHAKE SIMULATION)
+  // ==========================================================================
+
+  checkAuthSession() {
+    const modal = document.getElementById('authGatewayModal');
+    if (!modal) return;
+
+    if (this.authState.isAuthenticated && this.authState.currentUser) {
+      modal.classList.add('auth-hidden');
+      this.updateUserProfileUI();
+    } else {
+      modal.classList.remove('auth-hidden');
+      this.switchAuthTab('login');
+    }
+  }
+
+  switchAuthTab(tab) {
+    this.authTab = tab;
+    const loginTabBtn = document.getElementById('authTabLogin');
+    const signupTabBtn = document.getElementById('authTabSignup');
+    const loginForm = document.getElementById('loginForm');
+    const signupForm = document.getElementById('signupForm');
+    const alertBadge = document.getElementById('authAlertBadge');
+
+    if (alertBadge) alertBadge.classList.add('hidden');
+
+    if (tab === 'login') {
+      if (loginTabBtn) loginTabBtn.classList.add('active');
+      if (signupTabBtn) signupTabBtn.classList.remove('active');
+      if (loginForm) loginForm.classList.remove('hidden');
+      if (signupForm) signupForm.classList.add('hidden');
+    } else {
+      if (signupTabBtn) signupTabBtn.classList.add('active');
+      if (loginTabBtn) loginTabBtn.classList.remove('active');
+      if (signupForm) signupForm.classList.remove('hidden');
+      if (loginForm) loginForm.classList.add('hidden');
+    }
+  }
+
+  togglePasswordVisibility(inputId, btnId) {
+    const input = document.getElementById(inputId);
+    const btn = document.getElementById(btnId);
+    if (!input || !btn) return;
+
+    if (input.type === 'password') {
+      input.type = 'text';
+      btn.innerHTML = `<svg class="eye-svg" viewBox="0 0 24 24"><path fill="currentColor" d="M12 7c2.76 0 5 2.24 5 5 0 .65-.13 1.26-.36 1.83l2.92 2.92c1.51-1.26 2.7-2.89 3.44-4.75-1.73-4.39-6-7.5-11-7.5-1.4 0-2.74.25-3.98.7l2.16 2.16C10.74 7.13 11.35 7 12 7zM2 4.27l2.28 2.28.46.46C3.08 8.3 1.78 10.02 1 12c1.73 4.39 6 7.5 11 7.5 1.55 0 3.03-.3 4.38-.84l.42.42L19.73 22 21 20.73 3.27 3 2 4.27zM7.53 9.8l1.55 1.55c-.05.21-.08.43-.08.65 0 1.66 1.34 3 3 3 .22 0 .44-.03.65-.08l1.55 1.55c-.67.33-1.41.53-2.2.53-2.76 0-5-2.24-5-5 0-.79.2-1.53.53-2.2zm4.31-.78l3.15 3.15.02-.17c0-1.66-1.34-3-3-3l-.17.02z"/></svg>`;
+    } else {
+      input.type = 'password';
+      btn.innerHTML = `<svg class="eye-svg" viewBox="0 0 24 24"><path fill="currentColor" d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg>`;
+    }
+  }
+
+  checkPasswordStrength(password) {
+    const fill = document.getElementById('signupPwStrengthFill');
+    if (!fill) return;
+
+    if (!password || password.length === 0) {
+      fill.style.width = '0%';
+      fill.style.backgroundColor = '#EF4444';
+      return;
+    }
+
+    let score = 0;
+    if (password.length >= 6) score += 30;
+    if (password.length >= 10) score += 30;
+    if (/[A-Z]/.test(password)) score += 15;
+    if (/[0-9]/.test(password)) score += 15;
+    if (/[^A-Za-z0-9]/.test(password)) score += 10;
+
+    fill.style.width = `${Math.min(score, 100)}%`;
+    if (score < 40) fill.style.backgroundColor = '#EF4444';
+    else if (score < 75) fill.style.backgroundColor = '#F59E0B';
+    else fill.style.backgroundColor = '#10B981';
+  }
+
+  showAuthAlert(message, type = 'error') {
+    const badge = document.getElementById('authAlertBadge');
+    const msgEl = document.getElementById('authAlertMsg');
+    if (!badge || !msgEl) return;
+
+    msgEl.innerText = message;
+    badge.className = `auth-alert-badge ${type}`;
+  }
+
+  handleLogin(e) {
+    if (e) e.preventDefault();
+
+    const email = document.getElementById('loginEmail')?.value.trim();
+    const password = document.getElementById('loginPassword')?.value;
+    const role = document.getElementById('loginRole')?.value || 'Engineer';
+    const keepAirgapped = document.getElementById('keepAirgappedCheck')?.checked ?? true;
+
+    // Real-time Input Validation
+    if (!email || !email.includes('@') || !email.includes('.')) {
+      this.showAuthAlert("Please enter a valid corporate email address.");
+      return;
+    }
+    if (!password || password.length < 4) {
+      this.showAuthAlert("Invalid security key. Passcode must be at least 4 characters.");
+      return;
+    }
+
+    const loginForm = document.getElementById('loginForm');
+    const handshakeBox = document.getElementById('authHandshakeBox');
+    const titleEl = document.getElementById('handshakeTitle');
+    const subEl = document.getElementById('handshakeSub');
+
+    if (loginForm) loginForm.classList.add('hidden');
+    if (handshakeBox) handshakeBox.classList.remove('hidden');
+
+    // Dynamic Auth Handshake Simulation Steps
+    if (titleEl) titleEl.innerText = "Authenticating Security Tokens...";
+    if (subEl) subEl.innerText = "Validating Air-Gap Certificate & RSA-4096 Key";
+
+    setTimeout(() => {
+      if (titleEl) titleEl.innerText = "Decrypting Local Session...";
+      if (subEl) subEl.innerText = "Establishing Encrypted Vault Tunnel";
+    }, 600);
+
+    setTimeout(() => {
+      if (titleEl) titleEl.innerText = "Access Granted — Launching Console!";
+      if (subEl) subEl.innerText = "Sovereign Industrial Session Initialized";
+    }, 1200);
+
+    setTimeout(() => {
+      if (handshakeBox) handshakeBox.classList.add('hidden');
+      if (loginForm) loginForm.classList.remove('hidden');
+
+      // Formulate User Credentials
+      const usernamePart = email.split('@')[0];
+      const formattedName = usernamePart.split('.').map(p => p.charAt(0).toUpperCase() + p.slice(1)).join(' ');
+
+      this.authState = {
+        isAuthenticated: true,
+        currentUser: {
+          name: formattedName || "Rajvardhan Shinde",
+          email: email,
+          role: role
+        },
+        userRole: role,
+        airGappedSession: keepAirgapped
+      };
+
+      try {
+        localStorage.setItem('aura_auth_session', JSON.stringify(this.authState));
+      } catch(err) {
+        console.warn("Session storage failed", err);
+      }
+
+      this.updateUserProfileUI();
+
+      // Smoothly hide gateway overlay
+      const modal = document.getElementById('authGatewayModal');
+      if (modal) modal.classList.add('auth-hidden');
+
+      this.triggerToast("Authentication Successful", `Sovereign Security Gateway active for ${this.authState.currentUser.name} (${role})`);
+    }, 1600);
+  }
+
+  handleSignup(e) {
+    if (e) e.preventDefault();
+
+    const name = document.getElementById('signupName')?.value.trim();
+    const email = document.getElementById('signupEmail')?.value.trim();
+    const clearanceCode = document.getElementById('signupClearanceCode')?.value.trim();
+    const password = document.getElementById('signupPassword')?.value;
+    const confirmPassword = document.getElementById('signupConfirmPassword')?.value;
+
+    if (!name || name.length < 2) {
+      this.showAuthAlert("Please enter your full legal name.");
+      return;
+    }
+    if (!email || !email.includes('@') || !email.includes('.')) {
+      this.showAuthAlert("Please enter a valid industrial email address.");
+      return;
+    }
+    if (!clearanceCode) {
+      this.showAuthAlert("Security clearance code / organization key is required.");
+      return;
+    }
+    if (!password || password.length < 8) {
+      this.showAuthAlert("Passcode must be at least 8 characters long.");
+      return;
+    }
+    if (password !== confirmPassword) {
+      this.showAuthAlert("Passcode confirmation does not match.");
+      return;
+    }
+
+    const signupForm = document.getElementById('signupForm');
+    const handshakeBox = document.getElementById('authHandshakeBox');
+    const titleEl = document.getElementById('handshakeTitle');
+    const subEl = document.getElementById('handshakeSub');
+
+    if (signupForm) signupForm.classList.add('hidden');
+    if (handshakeBox) handshakeBox.classList.remove('hidden');
+
+    if (titleEl) titleEl.innerText = "Requesting Sovereign Clearance...";
+    if (subEl) subEl.innerText = `Validating Clearance Key: ${clearanceCode}`;
+
+    setTimeout(() => {
+      if (titleEl) titleEl.innerText = "Allocating Encrypted User Vault...";
+      if (subEl) subEl.innerText = "Generating Sovereign Public/Private Keypair";
+    }, 600);
+
+    setTimeout(() => {
+      if (titleEl) titleEl.innerText = "Clearance Granted — Welcome!";
+      if (subEl) subEl.innerText = "Initializing Account Credentials";
+    }, 1200);
+
+    setTimeout(() => {
+      if (handshakeBox) handshakeBox.classList.add('hidden');
+      if (signupForm) signupForm.classList.remove('hidden');
+
+      this.authState = {
+        isAuthenticated: true,
+        currentUser: {
+          name: name,
+          email: email,
+          role: 'Engineer'
+        },
+        userRole: 'Engineer',
+        airGappedSession: true
+      };
+
+      try {
+        localStorage.setItem('aura_auth_session', JSON.stringify(this.authState));
+      } catch(err) {
+        console.warn("Session storage failed", err);
+      }
+
+      this.updateUserProfileUI();
+
+      const modal = document.getElementById('authGatewayModal');
+      if (modal) modal.classList.add('auth-hidden');
+
+      this.triggerToast("Access Granted", `Welcome to Aura AI Workbench, ${name}!`);
+    }, 1600);
+  }
+
+  handleSSOLogin(provider) {
+    const handshakeBox = document.getElementById('authHandshakeBox');
+    const loginForm = document.getElementById('loginForm');
+    const signupForm = document.getElementById('signupForm');
+    const titleEl = document.getElementById('handshakeTitle');
+    const subEl = document.getElementById('handshakeSub');
+
+    if (loginForm) loginForm.classList.add('hidden');
+    if (signupForm) signupForm.classList.add('hidden');
+    if (handshakeBox) handshakeBox.classList.remove('hidden');
+
+    if (titleEl) titleEl.innerText = `Connecting to ${provider}...`;
+    if (subEl) subEl.innerText = "Authenticating Enterprise SAML Tokens";
+
+    setTimeout(() => {
+      if (titleEl) titleEl.innerText = "SSO Authentication Verified!";
+      if (subEl) subEl.innerText = "Exchanging Air-Gap Security Handshake";
+    }, 800);
+
+    setTimeout(() => {
+      if (handshakeBox) handshakeBox.classList.add('hidden');
+      if (this.authTab === 'login' && loginForm) loginForm.classList.remove('hidden');
+      if (this.authTab === 'signup' && signupForm) signupForm.classList.remove('hidden');
+
+      this.authState = {
+        isAuthenticated: true,
+        currentUser: {
+          name: "Sovereign Industrial User",
+          email: `user@${provider.toLowerCase().replace(/[^a-z]/g, '')}.internal`,
+          role: "Engineer"
+        },
+        userRole: "Engineer",
+        airGappedSession: true
+      };
+
+      try {
+        localStorage.setItem('aura_auth_session', JSON.stringify(this.authState));
+      } catch(e) {}
+
+      this.updateUserProfileUI();
+
+      const modal = document.getElementById('authGatewayModal');
+      if (modal) modal.classList.add('auth-hidden');
+
+      this.triggerToast("SSO Authenticated", `Signed in via ${provider}. Session active.`);
+    }, 1400);
+  }
+
+  updateUserProfileUI() {
+    if (!this.authState.currentUser) return;
+
+    const name = this.authState.currentUser.name || "Plant Engineer";
+    const role = this.authState.currentUser.role || "Engineer";
+
+    // Generate Initials
+    const parts = name.trim().split(' ');
+    let initials = 'PE';
+    if (parts.length >= 2) initials = (parts[0][0] + parts[1][0]).toUpperCase();
+    else if (parts.length === 1 && parts[0].length >= 2) initials = parts[0].substring(0, 2).toUpperCase();
+
+    const avatarEl = document.getElementById('topNavAvatar');
+    const nameEl = document.getElementById('topNavUserName');
+    const deptEl = document.getElementById('topNavUserDept');
+
+    if (avatarEl) avatarEl.innerText = initials;
+    if (nameEl) nameEl.innerText = name;
+    if (deptEl) deptEl.innerText = `${role} • Sovereign Session`;
+
+    // Sync RBAC Select in Drawer
+    const rbacSel = document.getElementById('rbacSelect');
+    if (rbacSel) {
+      const val = role.toLowerCase().includes('operator') ? 'operator' : role.toLowerCase().includes('admin') ? 'admin' : 'engineer';
+      rbacSel.value = val;
+      this.currentRBAC = val;
+    }
+  }
+
+  showForgotHelp(e) {
+    if (e) e.preventDefault();
+    this.showAuthAlert("To reset your security key, contact your local On-Premise System Admin or insert your Hardware Security Key.", "success");
+  }
+
+  logout() {
+    this.authState = {
+      isAuthenticated: false,
+      currentUser: null,
+      userRole: 'Engineer',
+      airGappedSession: true
+    };
+
+    try {
+      localStorage.removeItem('aura_auth_session');
+    } catch(e) {}
+
+    const modal = document.getElementById('authGatewayModal');
+    if (modal) {
+      modal.classList.remove('auth-hidden');
+    }
+
+    this.switchAuthTab('login');
+    this.showAuthAlert("Session locked. Re-authenticate to access workbench.", "success");
+    this.triggerToast("Session Locked", "You have been logged out of the Sovereign Workbench.");
   }
 
   downloadFile(filename, content, type) {
