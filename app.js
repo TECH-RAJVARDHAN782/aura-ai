@@ -807,11 +807,11 @@ class AuraAI {
     const width = canvas.width;
     const height = canvas.height;
 
-    ctx.fillStyle = '#030712';
+    ctx.fillStyle = '#0f172a';
     ctx.fillRect(0, 0, width, height);
 
     // Grid
-    ctx.strokeStyle = 'rgba(255, 255, 255, 0.08)';
+    ctx.strokeStyle = 'rgba(255, 255, 255, 0.12)';
     ctx.lineWidth = 1;
     for (let y = 30; y < height - 20; y += 30) {
       ctx.beginPath();
@@ -844,7 +844,7 @@ class AuraAI {
 
     const areaGrad = ctx.createLinearGradient(0, 0, 0, height);
     areaGrad.addColorStop(0, 'rgba(239, 68, 68, 0.4)');
-    areaGrad.addColorStop(1, 'rgba(6, 182, 212, 0.05)');
+    areaGrad.addColorStop(1, 'rgba(2, 132, 199, 0.05)');
 
     ctx.beginPath();
     ctx.moveTo(points[0].x, points[0].y);
@@ -867,7 +867,7 @@ class AuraAI {
     ctx.stroke();
 
     points.forEach((pt) => {
-      ctx.fillStyle = pt.val > 4.5 ? '#ef4444' : '#06b6d4';
+      ctx.fillStyle = pt.val > 4.5 ? '#ef4444' : '#0284c7';
       ctx.beginPath();
       ctx.arc(pt.x, pt.y, pt.val > 8.0 ? 5 : 3, 0, Math.PI * 2);
       ctx.fill();
@@ -882,10 +882,10 @@ class AuraAI {
     const width = canvas.width;
     const height = canvas.height;
 
-    ctx.fillStyle = '#030712';
+    ctx.fillStyle = '#ffffff';
     ctx.fillRect(0, 0, width, height);
 
-    ctx.strokeStyle = 'rgba(255, 255, 255, 0.08)';
+    ctx.strokeStyle = '#e2e8f0';
     for (let x = 50; x < width; x += 60) {
       ctx.beginPath();
       ctx.moveTo(x, 20);
@@ -905,14 +905,21 @@ class AuraAI {
       { x: 850, y: height - 60 }
     ];
 
-    ctx.strokeStyle = '#06b6d4';
-    ctx.lineWidth = 2;
+    ctx.strokeStyle = '#0284c7';
+    ctx.lineWidth = 2.5;
     ctx.beginPath();
     ctx.moveTo(points[0].x, points[0].y);
     for (let i = 1; i < points.length; i++) {
       ctx.lineTo(points[i].x, points[i].y);
     }
     ctx.stroke();
+
+    points.forEach((pt) => {
+      ctx.fillStyle = '#0284c7';
+      ctx.beginPath();
+      ctx.arc(pt.x, pt.y, 4, 0, Math.PI * 2);
+      ctx.fill();
+    });
   }
 
   toggleLiveSCADA() {
